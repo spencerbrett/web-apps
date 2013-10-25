@@ -173,7 +173,11 @@ class MyParser {
          * Fill in code here (you will probably need to write auxiliary
          * methods).
          */
+        
+        List<Item> itemData = parseItems(doc);
 
+        
+        
         try {
             File itemsData = new File("itemsData.csv");
             FileWriter itemFileWriter = new FileWriter(itemsData
@@ -203,7 +207,95 @@ class MyParser {
         }
 
         /** *********************************************************** */
+    }
 
+    /* parse all the items from the initial doc object */
+    public static List<Item> parseItems(Node doc) {
+        Element[] myAuctions = getElementsByTagNameNR((Element) doc
+                .getLastChild(), "Item");
+        List<Item> myItems = new ArrayList<Item>();
+        for (Element e : myAuctions) {
+            myItems.add(buildItem(e));
+        }
+        
+        return myItems;
+    }
+
+    public static Item buildItem(Element domItem) {
+        Item myItem = new Item();
+        DateFormat df = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+        User seller = new User();
+
+        myItem.setItemId(Integer.parseInt(domItem.getAttributeNode("ItemID")
+                .getNodeValue()));
+        myItem.setName(getElementTextByTagNameNR(domItem, "Name"));
+        for (Element e : getElementsByTagNameNR(domItem, "Category")) {
+            myItem.insertCategory(getElementText(e));
+        }
+        myItem.setCurrentBid(Double
+                .parseDouble(strip(getElementTextByTagNameNR(domItem,
+                        "Currently"))));
+        if (getElementTextByTagNameNR(domItem, "Buy_Price") != "") {
+            myItem.setBuyPrice(Double
+                    .parseDouble(strip(getElementTextByTagNameNR(domItem,
+                            "Buy_Price"))));
+        }
+        myItem.setFirstBid(Double.parseDouble(strip(getElementTextByTagNameNR(
+                domItem, "First_Bid"))));
+        myItem.setNumBids(Integer.parseInt(getElementTextByTagNameNR(domItem,
+                "Number_of_Bids")));
+        for (Element e : getElementsByTagNameNR(getElementByTagNameNR(domItem,
+                "Bids"), "Bid")) {
+            Bid b = new Bid();
+            User u = new User();
+            Element bidder = getElementByTagNameNR(e, "Bidder");
+
+            u.setUserId(bidder.getAttributeNode("UserID").getNodeValue());
+            u.setRating(Integer.parseInt(bidder.getAttributeNode("Rating")
+                    .getNodeValue()));
+            u.setLocation(getElementTextByTagNameNR(bidder, "Location"));
+            u.setCountry(getElementTextByTagNameNR(bidder, "Country"));
+
+            b.setBidder(u);
+            try {
+                b
+                        .setPostingTime(df.parse(getElementTextByTagNameNR(e,
+                                "Time")));
+            } catch (ParseException exception) {
+                exception.printStackTrace();
+                System.err.println("ERROR: Could not parse date.");
+                System.exit(1);
+            }
+            b.setAmount(Double.parseDouble(strip(getElementTextByTagNameNR(e,
+                    "Amount"))));
+            myItem.insertBid(b);
+        }
+
+        seller.setLocation(getElementTextByTagNameNR(domItem, "Location"));
+        seller.setCountry(getElementTextByTagNameNR(domItem, "Country"));
+        seller.setUserId(getElementByTagNameNR(domItem, "Seller")
+                .getAttributeNode("UserID").getNodeValue());
+        seller.setRating(Integer.parseInt(getElementByTagNameNR(domItem,
+                "Seller").getAttributeNode("Rating").getNodeValue()));
+        myItem.setSeller(seller);
+
+        try {
+            myItem.setStarted(df.parse(getElementTextByTagNameNR(domItem,
+                    "Started")));
+            myItem
+                    .setEnds(df
+                            .parse(getElementTextByTagNameNR(domItem, "Ends")));
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+            System.err.println("ERROR: Could not parse date.");
+            System.exit(1);
+        }
+        String description = getElementTextByTagNameNR(domItem, "Description");
+        if (description.length() > 4000) {
+            description = description.substring(0, 3999);
+        }
+        myItem.setDescription(description);
+        return myItem;
     }
 
     public static void main(String[] args) {

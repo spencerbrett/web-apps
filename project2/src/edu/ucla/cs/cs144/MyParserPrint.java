@@ -28,6 +28,7 @@ package edu.ucla.cs.cs144;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -186,9 +187,80 @@ class MyParserPrint {
         
         /**************************************************************/
         
-        recursiveDescent(doc, 0);
+        //recursiveDescent(doc, 0);
+        parseItems(doc);
     }
-    
+    /* parse all the items from the initial doc object */
+    public static void parseItems(Node doc) {
+    	Element[] myAuctions = getElementsByTagNameNR((Element) doc.getLastChild(), "Item");
+    	List<Item> myItems = new ArrayList<Item>();
+    	for(Element e : myAuctions) {
+    		myItems.add(buildItem(e));
+    	}
+    	for(Item i : myItems){
+    		System.out.println(i.printItem());
+    	}
+    }
+    public static Item buildItem(Element domItem) {
+    	Item myItem = new Item();
+		DateFormat df = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+		User seller = new User();
+    	myItem.setItemId(Integer.parseInt(domItem.getAttributeNode("ItemID").getNodeValue()));
+    	myItem.setName(getElementTextByTagNameNR(domItem,"Name"));
+    	for(Element e : getElementsByTagNameNR(domItem,"Category")){
+    		myItem.insertCategory(getElementText(e));
+    	}
+    	myItem.setCurrentBid(Double.parseDouble(strip(getElementTextByTagNameNR(domItem,"Currently"))));
+    	if(getElementTextByTagNameNR(domItem,"Buy_Price") != ""){
+        	myItem.setBuyPrice(Double.parseDouble(strip(getElementTextByTagNameNR(domItem,"Buy_Price"))));
+    	}
+    	myItem.setFirstBid(Double.parseDouble(strip(getElementTextByTagNameNR(domItem,"First_Bid"))));
+    	myItem.setNumBids(Integer.parseInt(getElementTextByTagNameNR(domItem,"Number_of_Bids")));
+    	for(Element e : getElementsByTagNameNR(getElementByTagNameNR(domItem, "Bids"),"Bid")) {
+    		Bid b = new Bid();
+    		User u = new User();
+    		Element bidder = getElementByTagNameNR(e, "Bidder");
+    		
+    		u.setUserId(bidder.getAttributeNode("UserID").getNodeValue());
+    		u.setRating(Integer.parseInt(bidder.getAttributeNode("Rating").getNodeValue()));
+    		u.setLocation(getElementTextByTagNameNR(bidder,"Location"));
+    		u.setCountry(getElementTextByTagNameNR(bidder,"Country"));
+    		
+    		b.setBidder(u);
+    		try {
+				b.setPostingTime(df.parse(getElementTextByTagNameNR(e,"Time")));
+			} catch (ParseException exception) {
+				// TODO Auto-generated catch block
+				exception.printStackTrace();
+				System.err.println("Could not parse date.");
+				System.exit(1);
+			}
+    		b.setAmount(Double.parseDouble(strip(getElementTextByTagNameNR(e,"Amount"))));
+    		myItem.insertBid(b);
+    	}
+    	
+    	seller.setLocation(getElementTextByTagNameNR(domItem,"Location"));
+    	seller.setCountry(getElementTextByTagNameNR(domItem,"Country"));
+    	seller.setUserId(getElementByTagNameNR(domItem,"Seller").getAttributeNode("UserID").getNodeValue());
+    	seller.setRating(Integer.parseInt(getElementByTagNameNR(domItem,"Seller").getAttributeNode("Rating").getNodeValue()));
+    	myItem.setSeller(seller);
+    	
+    	try {
+			myItem.setStarted(df.parse(getElementTextByTagNameNR(domItem,"Started")));
+			myItem.setEnds(df.parse(getElementTextByTagNameNR(domItem,"Ends")));
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			System.err.println("Could not parse date.");
+			System.exit(1);
+		}
+    	String description = getElementTextByTagNameNR(domItem,"Description");
+    	if(description.length()>4000){
+    		description = description.substring(0, 3999);
+    	}
+    	myItem.setDescription(description);
+    	return myItem;
+    }
     public static void recursiveDescent(Node n, int level) {
         // adjust indentation according to level
         for(int i=0; i<4*level; i++)
@@ -215,10 +287,10 @@ class MyParserPrint {
     }  
     
     public static void main (String[] args) {
-        if (args.length == 0) {
+        /*if (args.length == 0) {
             System.out.println("Usage: java MyParser [file] [file] ...");
             System.exit(1);
-        }
+        }*/
         
         /* Initialize parser. */
         try {
@@ -237,10 +309,12 @@ class MyParserPrint {
             System.exit(2);
         }
         
-        /* Process all files listed on command line. */
+        /* Process all files listed on command line. 
         for (int i = 0; i < args.length; i++) {
             File currentFile = new File(args[i]);
             processFile(currentFile);
-        }
+        }*/
+        File f = new File("items-0.xml");
+        processFile(f);
     }
 }

@@ -1,8 +1,8 @@
 package edu.ucla.cs.cs144;
 
 public class User {
-	private int userId;
-	private double rating;
+	private String userId;
+	private int rating;
 	private String location;
 	private String country;
 	
@@ -18,16 +18,16 @@ public class User {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public double getRating() {
+	public int getRating() {
 		return rating;
 	}
-	public void setRating(double rating) {
+	public void setRating(int rating) {
 		this.rating = rating;
 	}
-	public int getUserId() {
+	public String getUserId() {
 		return userId;
 	}
-	public void setUserId(int userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 }

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8" />
+  <title>Project 1 Submission Form</title>
+ </head>
+ <body>
+  <h1>Project 1 Submission</h1>
+  <FORM METHOD="POST" ENCTYPE="multipart/form-data" ACTION="http://oak.cs.ucla.edu/cs144/projects/project1/submit/">
+   Partner 1 Student ID: <INPUT TYPE="text" NAME="sid" SIZE=9 MAXLENGTH=9><BR>
+   Partner 2 Student ID: <INPUT TYPE="text" NAME="sid2" SIZE=9 MAXLENGTH=9><BR>
+   Primary Email: <INPUT TYPE="text" NAME="email" SIZE=20 MAXLENGTH=50><BR>
+   Primary Name: <INPUT TYPE="text" NAME="name" SIZE=30 MAXLENGTH=50><BR>
+   File to upload: <INPUT TYPE="file" NAME="file"><BR>
+   <SELECT NAME="platform">
+    <OPTION SELECTED>unknown
+    <OPTION>vmware
+    <OPTION>virtualbox
+   </SELECT><BR>
+   <INPUT TYPE=SUBMIT VALUE="Submit">
+  </FORM>
+ </body>
+</html>

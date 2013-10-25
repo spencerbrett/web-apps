@@ -195,9 +195,6 @@ class MyParser {
     	for(Element e : myAuctions) {
     		myItems.add(buildItem(e));
     	}
-    	for(Item i : myItems){
-    		System.out.println(i.printItem());
-    	}
     }
     public static Item buildItem(Element domItem) {
     	Item myItem = new Item();
@@ -231,7 +228,7 @@ class MyParser {
 			} catch (ParseException exception) {
 				// TODO Auto-generated catch block
 				exception.printStackTrace();
-				System.err.println("Could not parse date.");
+				System.err.println("ERROR: Could not parse date.");
 				System.exit(1);
 			}
     		b.setAmount(Double.parseDouble(strip(getElementTextByTagNameNR(e,"Amount"))));
@@ -250,7 +247,7 @@ class MyParser {
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			System.err.println("Could not parse date.");
+			System.err.println("ERROR: Could not parse date.");
 			System.exit(1);
 		}
     	String description = getElementTextByTagNameNR(domItem,"Description");

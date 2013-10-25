@@ -1,5 +1,7 @@
 package edu.ucla.cs.cs144;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Bid {
@@ -14,8 +16,9 @@ public class Bid {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	public Date getPostingTime() {
-		return postingTime;
+	public String getPostingTime() {
+		DateFormat ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return ts.format(postingTime);
 	}
 	public void setPostingTime(Date postingTime) {
 		this.postingTime = postingTime;

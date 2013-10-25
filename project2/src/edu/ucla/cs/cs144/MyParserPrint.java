@@ -205,7 +205,6 @@ class MyParserPrint {
     	Item myItem = new Item();
 		DateFormat df = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
 		User seller = new User();
-		
     	myItem.setItemId(Integer.parseInt(domItem.getAttributeNode("ItemID").getNodeValue()));
     	myItem.setName(getElementTextByTagNameNR(domItem,"Name"));
     	for(Element e : getElementsByTagNameNR(domItem,"Category")){

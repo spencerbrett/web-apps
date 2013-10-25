@@ -1,6 +1,8 @@
 package edu.ucla.cs.cs144;
 
 import java.lang.String;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,16 +74,18 @@ public class Item {
 		this.started = started;
 	}
 
-	public Date getStarted() {
-		return started;
+	public String getStarted() {
+		DateFormat ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return ts.format(started);
 	}
 
 	public void setEnds(Date ends) {
 		this.ends = ends;
 	}
 
-	public Date getEnds() {
-		return ends;
+	public String getEnds() {
+		DateFormat ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return ts.format(ends);
 	}
 
 	public void setDescription(String desc) {
@@ -132,6 +136,7 @@ public class Item {
 		this.seller = seller;
 	}
 	public String printItem(){
+		DateFormat ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	String result = "Item ID: "+Integer.toString(itemId)+"\n";
     	result += "Name: "+name+"\n";
     	for(String category : categories) {
@@ -143,13 +148,13 @@ public class Item {
     	}
     	result += "First_Bid: "+Double.toString(firstBid)+"\n";
     	result += "Number_of_Bids: "+Integer.toString(numBids)+"\n";
-    	result += "Started: "+started.toString()+"\n";
-    	result += "Ends: "+ends.toString()+"\n";
+    	result += "Started: "+ts.format(started)+"\n";
+    	result += "Ends: "+ts.format(ends)+"\n";
     	
     	for(Bid b : bids){
     		result += "Bid\n";
     		result += "\tAmount: "+ Double.toString(b.getAmount())+"\n";
-    		result += "\tTime: " + b.getPostingTime().toString()+"\n";
+    		result += "\tTime: " + b.getPostingTime()+"\n";
     		result += "\tUser\n";
     		result += "\t\tUser_ID: "+b.getBidder().getUserId()+"\n";
     		result += "\t\tRating: "+Integer.toString(b.getBidder().getRating())+"\n";

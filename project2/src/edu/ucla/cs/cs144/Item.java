@@ -10,14 +10,15 @@ public class Item {
 	private int itemId;
 	private String name;
 	private double currentBid;
-	private double buyPrice;
+	private Double buyPrice = null;
 	private double firstBid;
 	private int numBids;
-	private int sellerId;
 	private Date started;
 	private Date ends;
 	private String description;
-	private List categories = new ArrayList();
+	private List<String> categories = new ArrayList<String>();
+	private List<Bid> bids = new ArrayList<Bid>();
+	private User seller;
 
 	public void setItemId(int id) {
 		itemId = id;
@@ -47,7 +48,7 @@ public class Item {
 		buyPrice = price;
 	}
 
-	public double getBuyPrice() {
+	public Double getBuyPrice() {
 		return buyPrice;
 	}
 
@@ -65,14 +66,6 @@ public class Item {
 
 	public int getNumBids() {
 		return numBids;
-	}
-
-	public void setSellerId(int id) {
-		sellerId = id;
-	}
-
-	public int getSellerId() {
-		return sellerId;
 	}
 
 	public void setStarted(Date started) {
@@ -99,11 +92,11 @@ public class Item {
 		return description;
 	}
 
-	public List getCategories() {
+	public List<String> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List categories) {
+	public void setCategories(List<String> categories) {
 		this.categories = categories;
 	}
 	
@@ -114,4 +107,64 @@ public class Item {
 	public String getCategory(int index) {
 		return (String) categories.get(index);
 	}
+
+	public List<Bid> getBids() {
+		return bids;
+	}
+
+	public void setBids(List<Bid> bids) {
+		this.bids = bids;
+	}
+	
+	public void insertBid(Bid bid) {
+		bids.add(bid);
+	}
+	
+	public Bid getBid(int index) {
+		return (Bid) bids.get(index);
+	}
+
+	public User getSeller() {
+		return seller;
+	}
+
+	public void setSeller(User seller) {
+		this.seller = seller;
+	}
+	public String printItem(){
+    	String result = "Item ID: "+Integer.toString(itemId)+"\n";
+    	result += "Name: "+name+"\n";
+    	for(String category : categories) {
+    		result += "Category: "+category+"\n";
+    	}
+    	result += "Currently: "+Double.toString(currentBid)+"\n";
+    	if(this.getBuyPrice() != null){
+    		result += "Buy_Price: "+Double.toString(buyPrice)+"\n";
+    	}
+    	result += "First_Bid: "+Double.toString(firstBid)+"\n";
+    	result += "Number_of_Bids: "+Integer.toString(numBids)+"\n";
+    	result += "Started: "+started.toString()+"\n";
+    	result += "Ends: "+ends.toString()+"\n";
+    	
+    	for(Bid b : bids){
+    		result += "Bid\n";
+    		result += "\tAmount: "+ Double.toString(b.getAmount())+"\n";
+    		result += "\tTime: " + b.getPostingTime().toString()+"\n";
+    		result += "\tUser\n";
+    		result += "\t\tUser_ID: "+b.getBidder().getUserId()+"\n";
+    		result += "\t\tRating: "+Integer.toString(b.getBidder().getRating())+"\n";
+    		result += "\t\tLocation: "+b.getBidder().getLocation()+"\n";
+    		result += "\t\tCountry: "+b.getBidder().getCountry()+"\n";
+    	}
+    	
+    	result += "Seller\n";
+    	result += "\tUser_ID: "+seller.getUserId()+"\n";
+    	result += "\tRating: "+Integer.toString(seller.getRating())+"\n";
+    	result += "\tLocation: "+seller.getLocation()+"\n";
+    	result += "\tCountry: "+seller.getCountry()+"\n";
+    	
+    	result += "Description: "+description+"\n";
+    	
+    	return result;
+    }
 }

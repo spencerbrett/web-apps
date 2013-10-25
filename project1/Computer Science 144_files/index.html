@@ -1,0 +1,239 @@
+
+<!-- saved from url=(0057)http://oak.cs.ucla.edu/cs144/projects/project1/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="style.css" rel="stylesheet" type="text/css">
+<title>CS144 Project 1</title>
+<style type="text/css"></style></head>
+
+	<body bgcolor="white" style="">
+		<center>
+			<font size="+2" color="#bb0000">CS144: Web Applications</font></center>
+		<table border="0" cellpadding="4" cellspacing="10" width="100%">
+			<tbody>
+				<tr>
+					<td width="100%" bgcolor="#ccccff">
+						<center>
+							<b>Project Part 1: Setup Your Environment<br>
+								Due Friday, Oct. 11, 2013</b></center>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<ul>
+			<p>
+				</p><li><b>Submission deadline:</b> Programming work is submitted electronically and must be submitted by Friday at 11:00PM. However, we recognize that there might be last minute difficulty during submission process, so as long as you started your sumission process before 11:00PM, you have until 11:30PM to completely upload your submission. After 11:30PM, you will have to use grace period as follows.<p></p></li>
+
+<li><b>Late Policy:</b> Programming work submitted after the deadline but less than 24 hours late (i.e., by Saturday 11:00PM) will be accepted but penalized 10%, and programming work submitted more than 24 hours but less than 48 hours late (i.e., by Sunday 11:00PM) will be penalized 30%. No programming work will be accepted more than 48 hours late. Since emergencies do arise, each student is allowed a <i>total</i> of four unpenalized late days (four periods up to 24 hours each) for programming work, but no single assignment may be more than two days late. See the <a href="http://oak.cs.ucla.edu/cs144/projects/index.html#LATE">Assigned Work</a> page for more information.
+					<p></p>
+				</li><li><b>Honor Code reminder:</b> For more detailed discussion of the Honor Code as it pertains to CS144, please see the Assigned Work page under <a href="http://oak.cs.ucla.edu/cs144/projects/index.html#HONESTY">Honor Code</a>. In summary: You must indicate on all of your submitted work <i>any assistance</i> (human or otherwise) that you received. Any assistance received that is not given proper citation will be considered a violation of the Honor Code. In any event, you are responsible for understanding and being able to explain on your own all material that you submit.
+					<p></p>
+				</li><li><b>Reminder:</b> Projects must be completed individually or by a team of two.
+			<p></p>
+		</li></ul>
+		<hr>
+		<p>In this course you will be developing an online auction web application using Java, MySQL, Lucene, Apache Tomcat and Apache Axis2.
+Since it is quite error-prone and tedious to install and configure these software tools correctly, you will be doing all project development using a <em>virtual machine</em> (VM) that has all these tools preinstalled. After you follow the steps below, to install the virtual machine for the project, you will have to write a simple Java program and then submit your work via an HTTP POST request to a URL we provide.</p>
+<h2>Part A: Setup Your System</h2>
+<h3>Download and Install VirtualBox Image</h3>
+<p>VirtualBox is an application that runs on a <em>host</em> operating systems, such as Windows, Mac OS X, or Linux. The host is the actual operating system and physical hardware, such as your laptop. Once VirtualBox is setup, it allows you to run multiple <em>guest</em> operating systems inside, which can be any OS capable of running on the x86 or x64 architecture. In other words, it provides the illusion of having multiple "virtual machines (VM)" on a single hardware, each with its own operating system (e.g., Windows host and Linux guest).
+
+</p><p>You will need the following files to setup the virtual machine for the class project:
+			</p><ul>
+			<li><b>VirtualBox Program:</b> <a href="http://www.virtualbox.org/wiki/Downloads">VirtualBox</a> software for your host operating system (Windows/Mac/Linux).
+			</li><li><b>Virtual Machine Image:</b> <a href="http://oak.cs.ucla.edu/cs144/projects/virtualbox/CS144.ova">CS144.ova</a> - This is a very large file (~1GB), so it will take a while to download.
+      <br>
+      Also, please make sure the file you download is not corrupt, see checksum as follows:
+        <ul>
+          <li>SHA-1 - 2e6ae73c35289950a35fd2dac81cb6be0e57a329</li>
+          <li>MD5   - 2857ee936c759294220f140888ca11f5</li>
+        </ul>
+
+			</li></ul>
+
+<p>Follow the step-by-step instructions on the following page to install our VM on your computer:
+  </p><ul>
+    <li><a href="http://oak.cs.ucla.edu/cs144/projects/virtualbox/windows.html">VirtualBox virtual machine setup instruction for Windows</a></li><a href="http://oak.cs.ucla.edu/cs144/projects/virtualbox/windows.html">
+    </a><li><a href="http://oak.cs.ucla.edu/cs144/projects/virtualbox/windows.html"></a><a href="http://oak.cs.ucla.edu/cs144/projects/virtualbox/osx.html">VirtualBox virtual machine setup instruction for Mac</a></li>
+
+  </ul>
+
+<p></p>
+
+<h3>Get Familiar with Unix Command-Line Shell</h3>
+
+All of your project development should be done and tested inside our VM, which is based on Ubuntu Linux operating system. For the most part, you will be using a Unix shell through xterm in our VM.
+If you are not familiar with Unix shell commands,
+read the <a href="http://oak.cs.ucla.edu/cs144/projects/unix/index.html">Unix Tutorial for Beginners</a> and learn the basic Unix commands.
+
+				<p>There are a few important <em>environment variables</em> that have been set within the VM.
+				</p><ul>
+					<p></p><li><strong>JAVA_HOME</strong>: The <tt>JAVA_HOME</tt> environment variable points to the JDK installation directory, which is <tt>/usr/lib/jvm/java-6-sun</tt> in our VM.</li><p></p>
+					<p></p><li><strong>CATALINA_HOME</strong>: This variable specifies the location of the Tomcat installation, which is <tt>/usr/local/apache-tomcat-6.0.16</tt>.</li><p></p>
+					<p></p><li><strong>AXIS2_HOME</strong>: This variable specifies the location of the Apache Axis2 installation, which is <tt>/usr/local/axis2-1.4</tt>.</li><p></p>
+					<p></p><li><strong>EBAY_DATA</strong>: This variable specifies the location of the ebay XML auction data that we will be using for the project. Its value is <tt>/home/cs144/ebay-data</tt>.</li><p></p>
+					<p></p><li><strong>LUCENE_INDEX</strong>: This variable specifies the location of a "keyword index" that you will have to create later. Its value is <tt>/home/lucene-index</tt>.</li><p></p>
+					<p></p><li><strong>HOME</strong>: This variable specifies the location of your home directory, which is <tt>/home/cs144</tt>.</li><p></p>
+				</ul>
+All of the above environment variables are set in the <tt>.bashrc</tt> file located at your home directory in the VM and are set up automatically whenever you login. You can refer to the values of these variables in your Unix shell, like <tt>$JAVA_HOME</tt>, <tt>$CATALINA_HOME</tt>, etc.
+For example, if you issue the following <tt>echo</tt> command in xterm
+<pre class="code">cs144@cs144:~$ echo $JAVA_HOME
+/usr/lib/jvm/java-6-sun
+</pre>
+you will see the value of <tt>JAVA_HOME</tt>.
+			
+
+<h2>Part B: MySQL Warm-Up</h2>
+
+<p>In this part, you get yourself familiar with the basic MySQL commands by creating and loading a table and issuing a few queries.
+
+</p><p>First, read our <a href="http://oak.cs.ucla.edu/cs144/projects/mysql/index.html">basic MySQL tutorial</a> to learn how you can interact with MySQL and issue SQL commands. In particular, the tutorial also provides a brief explanation on <tt>CREATE TABLE</tt>, <tt>LOAD DATA</tt> and <tt>SELECT</tt> commands, which will be important to finish this part of the project.  If you need to brush up on SQL commands other than the ones explained in the tutorial, you may find the <em>How Does This RDBMS Thing Work?</em> section of <a href="http://philip.greenspun.com/sql/introduction.html">SQL for Web Nerds</a> helpful.</p>
+
+<p>As we explained in the MySQL tutorial, we have created two databases in MySQL on our VM: <code>TEST</code> and <code>CS144</code> (note these database names are case sensitive). The <code>CS144</code> database is your "production" database, meant for use in the final versions of your code. The <code>TEST</code> database is for any experimentation and for use during development and debugging. We have  created two MySQL users for the database.
+For your project work, use the MySQL user <code>cs144</code> (no password), which has full access to the <code>CS144</code> and <code>TEST</code> databases.
+The MySQL user <code>root</code> with password <code>password</code> has full unrestricted access to everything and should be used only for special adminstrative operations, like creating new users and databases, etc.</p>
+
+Now take the following steps to create, load, and query a table in MySQL:
+
+<ol>
+<li>We have included a comma-separated data file at <tt>$EBAY_DATA/actors.csv</tt> inside VM. Create a table called Actors in the <tt>TEST</tt> database
+(since this is just a warm-up project, we will be using <tt>TEST</tt>, not <tt>CS144</tt>).
+The Actors table should have the following schema:
+<pre>Actors(Name:VARCHAR(40), Movie:VARCHAR(80), Year:INTEGER, Role:VARCHAR(40))
+</pre>
+
+</li><li>Load the <tt>actors.csv</tt> file into the Actors table. Make sure that the double quotes enclosing some of the attributes in the data file are removed when they are loaded.
+
+</li><li>Retrieve some loaded data from the Actors table. In particular, write a query that returns the answer to this question: "Give me the names of all the actors in the movie 'Die Another Day'." Feel free to experiment with other interesting queries.
+
+</li><li>Once you are done, drop the Actors table from MySQL, so that it will not stay in the database for later parts of our project.
+</li></ol>
+
+Create a MySQL batch script file named <tt>actors.sql</tt> that shows every one of the steps in Part B. Again, the MySQL tutorial had a brief explanation on how to create and run MySQL batch script file.
+Make sure that your script is executable and has no error, meaning that we should be able to run your script by issuing the following command:
+<pre class="code">cs144@cs144:~$ mysql TEST &lt; actors.sql
+</pre>
+Please use <tt>'~/ebay-data/actors.csv'</tt> as the location of the data file inside your script (in Unix, the symbol <tt>'~'</tt> indicates the user's home directory).  You may assume that there is no Actors table in the <tt>TEST</tt> database when we execute your script.
+If needed, use the <tt>--</tt> tag to make comments within your SQL script.
+
+ <p><strong>Notes on CR/LF issue:</strong> If your host OS is Windows, you need to pay particular attention to how each line of a text file (including your script file) ends. By convention, Windows uses a pair of CR (carriage return) and LF (line feed) characters to terminate lines. On the other hand, Unix (including Linux and Mac OS X) uses only a LF character. Therefore, problems arise when you are feeding a text file generated from a Windows program to a Unix tool (such as <tt>mysql</tt>). Since the end of the line of the input file is different from what the tools expect, you may encounter unexpected behavior from these tools. If you encounter any wired error when you run your script, you may want to run the <tt>dos2unix</tt> command in VM on your Windows-generated text file. This command converts CR and LF at the end of each line in the input file to just LF. Type <tt>dos2unix --help</tt> to learn how to use this command.
+
+</p><h2>Part C: Java Programming Warm-Up</h2>
+				If you are new to Java or if it has been a while since your last Java programming, first read <a href="http://oak.cs.ucla.edu/cs144/projects/java/ctojava.pdf">A Crash Course from C++ to Java</a>. This excellent tutorial explains the basics of Java, including how you can name, compile, and run your Java program. (It is okay to skip the parts on BlueJ in the tutorial, since we will not be using it.) If you are quite familiar with Java, but you just want to brush up on minor details quickly, you may want to read <a href="http://oak.cs.ucla.edu/cs144/projects/java/javaintro.pdf">slides on Java</a> instead.  All basic tools needed for Java programming (e.g., <tt>javac</tt> and <tt>java</tt>) are available on our VM.<p></p>
+
+				<p>Now implement a Java program that computes the <a href="http://en.wikipedia.org/wiki/SHA-1">SHA-1 hash</a> over the content of an input file. SHA-1 is a cryptographic one-way hash function that computes a 160 bit value (or 40-digit hex value) from a sequence of bytes. Your Java program should satisfy the following requirements:
+				</p><ol>
+				<li>Your program should be implemented as a single Java class <tt>ComputeSHA</tt>. Your program should take the input filename as the first command line parameter. For example, a user should be able to execute your program like
+				<pre class="code">java ComputeSHA filename.txt</pre>
+				where <tt>filename.txt</tt> is the name of the input file.
+				</li><li>Given the input file, your program should compute the SHA-1 hash value over the entire content of the file and print the computed hash value on screen as follows:
+				<pre class="code">17a23c746fed66a6f285c665422deafcf51aca40</pre>
+ Your program should print the above hash value if you provide the <a href="http://oak.cs.ucla.edu/cs144/projects/project1/sample-input.txt">sample-input.txt</a> file as its input.
+Please ensure that the output is formatted exactly as above including its case.
+
+<p><b>Notes on wget:</b> For downloading a small file to the VM, you can use the command <tt>wget</tt>. For example, the <tt>sample-input.txt</tt> file can be downloaded as follows:
+</p><pre class="code">cs144@cs144:~$ wget http://oak.cs.ucla.edu/cs144/projects/project1/sample-input.txt
+</pre>
+ 				</li></ol>
+
+<p>In implementing your program, you may find the Java class <tt><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/security/MessageDigest.html">java.security.MessageDigest</a></tt> useful, which provides a number of cryptographic hash functions including SHA-1 and MD5. If you decide to use <tt>MessageDigest</tt> class, make sure you import <tt>java.security.*</tt> packages in your source code. If what we just said sounds Greek to you, again, read <a href="http://oak.cs.ucla.edu/cs144/projects/java/ctojava.pdf">A Crash Course from C++ to Java</a>. To learn how you may use MessageDigest class in Java, try a query like "Java MessageDigest example" on Google and look at the top few results. They are likely to contain good example codes that show you how you can use the class. If you want to learn about basic I/O in Java, see <a href="http://java.sun.com/docs/books/tutorial/essential/io/">Java basic I/O tutorial</a>.
+
+
+<!--<a href="messagedigest.html">This page</a> (downloaded from <a href="http://www.jguru.com/">jGuru</a>) has more detailed instruction on how you can use a <tt>MessageDigest</tt> class.--></p>
+
+
+<strong>Notes on editors for Java development:</strong> You can choose whatever editors you like for Java development. Options include:<p>
+</p><ul>
+<li>Simple text editors: You may use any text editor in the VM (<tt>vi</tt>, <tt>emacs</tt>, <tt>nano</tt> and <tt>nedit</tt> are available in the VM) to edit text files. Instead, you may use your favorite text editor
+from your host OS (e.g., notepad or TextEdit) and transfer the edited file
+to the VM through the shared directory. Remember that the directory
+that you specified as the shared directory from the host (e.g., <tt>C:\vm-shared</tt>
+from Windows) is available at <tt>/mnt/hgfs/host_shared</tt> in the VM,
+which is symbolically linked at <tt>$HOME/shared</tt> as well. Again, be careful with the CR/LF issue if you use the second option.</li><p>
+</p><li>Java IDE: IDE (integrated development environment) provides a very powerful and convenient programming environment, with features such as constant compile error checking, automatic compiling, and integrated debugging.
+While we <em>do not support</em> a particular Java IDE, many students have reported that Eclipse was particularly easy to use and powerful. It can be run by issuing the command <tt>eclipse</tt> in the VM.
+If you want to learn how to use Eclipse,
+you may find the <a href="http://oak.cs.ucla.edu/cs144/projects/eclipse/windows.html">Eclipse tutorial</a> helpful.
+It takes a bit of effort to learn it initially, but it is likely to save you significant time and effort afterward.
+</li></ul>
+
+
+<h2>Part D: Create a Submission Page</h2>
+				To submit your work, you will need to write and open with a browser a simple web page with an <a href="http://oak.cs.ucla.edu/cs144/reference/form.html">HTML form</a> consisting of five (or six if you have a partner) `fields:
+				<ol>
+					<li>A text field named "sid", which will contain your 9-digit UCLA student ID number.
+					</li><li>A text field named "email", which will contain your email address.
+					</li><li>A text field named "name", which will contain your name.
+					</li><li>A file field named "file", where you will specify a <b>project1.zip</b> file on your machine to upload. The contents of that zip file will be discussed below.
+          </li>
+          <li>
+            A "SELECT" field named "platform", where you can select anyone from the following three option elements.
+            The first option is named "unknown" with the value "unknown".
+            The second option is named "vmware" with the value "vmware".
+            And, the third one is named "virtualbox" with the value "virtualbox".
+					</li>
+          <li>If you have a partner, a text field named "sid2", which will contain your partner's 9-digit UCLA student ID number.
+				</li></ol>
+				We have opened the submission URL at <a href="http://oak.cs.ucla.edu/cs144/projects/project1/submit/">http://oak.cs.ucla.edu/cs144/projects/project1/submit/</a> (make sure to include the slash at the end) which expects those five (or six) fields in an HTTP POST request (with <a href="http://www.w3.org/TR/html4/interact/forms.html#adef-enctype">enctype="multipart/form-data"</a>). If your request is formed correctly, you will see a confirmation page and receive an email containing information about your submission. Incorrectly formed requests will receive an error message (no email).
+		<h2>Your Final Submission</h2>
+	<p>Your project must be submitted electronically before the deadline using the HTML page that you created above.
+If you submit multiple times, we will grade only the latest submission.
+The zip file that you submit must be named <tt>project1.zip</tt>, created using a zip compression utility (like using "<tt>zip -r project1.zip *</tt>" command in the VM), and must contain the following files:
+
+</p><ol>
+			<li><b>submission.html:</b> A copy of the html file used for submission.</li>
+			<li><b>actors.sql:</b> A copy of your MySQL batch script file from Part B of this project.</li>
+			<li><b>ComputeSHA.java:</b> The source code of you Java program for SHA-1 hash computation from Part C.</li>
+			<li>(Optionally) <b>README.txt:</b> A README file (plaintext) containing anything else you find worth mentioning.
+		</li></ol>
+Please ensure that your submission is packaged correctly with all required files.
+		Make sure that each file is correctly named (including its case) and project1.zip contains all files directly, not within a subdirectory. In other words, unzipping project1.zip should produce the files in the same directory as project1.zip.
+<b>Significant points may be deducted from your submission if the grader encounters an error due to incorrect packaging, missing files, and failure to follow our exact spec.</b>
+
+
+<h3>Testing of Your Submission</h3>
+Grading is a difficult and time-consuming process, and file naming and packaging convention is very important to test your submission without any error. In order to help you ensure the correct packaging of your submission, we have included a "grading script" in the VM. In essence, the grading script unzips your submission to a temporary directory and executes your files to test whether they are likely to run OK on the grader's machine. The grading script for Project 1 is <tt>$HOME/grading/scripts/p1</tt> and can be executed like:
+<pre class="code">cs144@cs144:~$ ~/grading/scripts/p1 project1.zip
+</pre>
+(if your project1.zip file is not located in the current directory, you need to add the path to the zip file before project1.zip).
+
+<p>You <b>MUST</b> test your submission using the script before your final submission to minimize the chance of an unexpected error during grading.
+Again, significant points may be deducted if the grader encounters an error
+during grading.
+When evertything runs properly, you will see an output similar to the following from the grading script:
+</p><pre class="code">Running your actors.sql script...
+Name
+Brosnan, Pierce
+Cleese, John
+Echevarría, Emilio
+Ho, Thomas
+Lee, Will Yun
+Madsen, Michael
+Makoare, Lawrence
+Salmon, Colin
+Stephens, Toby
+Yune, Rick
+Finished running actors.sql
+
+
+Compiling ComputeSHA.java...
+SUCCESS: Output from ComputeSHA on /home/cs144/grading/inputs/p1-input1.txt is correct
+</pre>
+
+
+		<h3>Grading Criteria</h3>
+<ul>
+<li>System setup/HTML (30%) -  gets full credit if the submission was successful and the submitted html file is ok</li>
+<li>No error in actors.sql (20%) - gets full credit if the script runs without any error</li>
+<li>Correctness of actors.sql (10%) - gets full credit if the query returns the correct results</li>
+<li>ComputeSHA compilation (10%) - gets full credit if the submission compiles without error</li>
+<li>ComputeSHA correctness (30%) - based on several test cases</li>
+
+</ul>
+
+
+
+
+	
+
+
+</body></html>

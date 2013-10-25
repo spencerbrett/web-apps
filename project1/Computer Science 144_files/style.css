@@ -1,0 +1,86 @@
+#body {
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0px;
+	background-color: #eeeeee;
+}
+
+.code {
+	background-color:#eeeeee;
+	border: solid 1px #000000;
+	font-family:"Courier New", Courier, mono;
+	font-size: .8em;
+	margin: 5px;
+	padding: 5px;
+}
+
+#mainBody {
+	margin-right: 200px;
+	margin-top: 0px;
+	margin-left: 0px;
+	padding: 10px 20px 10px 20px;
+	background-color: #FFFFFF;
+	border-right: solid 1px #cccccc;
+	border-bottom: solid 1px #cccccc;
+}
+
+	#mainBody {
+		font-size: .9em;
+	}
+
+#menu {
+	width: 170px;
+	margin-right: 10px;
+	margin-left: 10px;
+	margin-top: 10px;
+	right: 0px;
+	position: fixed;
+	float: right; /* for IE compatibility */
+}
+
+	#menu a:hover{
+		text-decoration: none;
+	}
+
+	#menu {
+		font-size: .9em;
+	}
+
+	#menu ul {
+		list-style-type: none;
+		list-style-position: outside;
+		margin: 5px 0px 5px 0px;
+		padding: 5px 0px 5px 22px;
+		line-height: 1.2em;
+		border: 1px solid #cccccc;
+		background-color: #ffffff;
+	}
+	#menu .active{
+		background-color: #eeeeee;
+		margin-left: -10px;
+		font-weight: bold;
+	}
+
+#navigation{
+	margin: 20px 200px 20px 10px;
+}
+	#navigation .left{
+		position:relative;
+		left: 0px;
+		float: left;
+		margin-bottom: 10px;
+	}
+	#navigation .right{
+		float: right;
+		position:relative;
+		right: 0px;
+		text-align: right;
+		margin-bottom: 10px;
+	}
+
+td {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+th {
+	font-family: Arial, Helvetica, sans-serif;
+}

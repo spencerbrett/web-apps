@@ -173,40 +173,109 @@ class MyParser {
          * Fill in code here (you will probably need to write auxiliary
          * methods).
          */
-        
+
         List<Item> itemData = parseItems(doc);
 
-        
-        
+        for (Item currentItem : itemData) {
+            appendItemDataFile(currentItem);
+        }
+
+        // try {
+        // File itemsData = new File("itemsData.csv");
+        // FileWriter itemFileWriter = new FileWriter(itemsData
+        // .getAbsoluteFile());
+        // BufferedWriter itemBufferedWriter = new BufferedWriter(
+        // itemFileWriter);
+        //
+        // itemBufferedWriter.write("Damn it, Mal!");
+        // itemBufferedWriter.append(" and so we shall go to war!");
+        // itemBufferedWriter.close();
+        // } catch (IOException e) {
+        // System.out.println("File error");
+        // System.exit(3);
+        // }
+
+        /** *********************************************************** */
+    }
+
+    public static void appendItemDataFile(Item item) {
         try {
-            File itemsData = new File("itemsData.csv");
-            FileWriter itemFileWriter = new FileWriter(itemsData
-                    .getAbsoluteFile());
-            BufferedWriter itemBufferedWriter = new BufferedWriter(
-                    itemFileWriter);
+            File itemsData = new File("Item.dat");
+            FileWriter fw = new FileWriter(itemsData.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
 
-            File usersData = new File("usersData.csv");
-            FileWriter userFileWriter = new FileWriter(usersData
-                    .getAbsoluteFile());
-            BufferedWriter userBufferedWriter = new BufferedWriter(
-                    userFileWriter);
+            String line = item.getItemId() + ",`" + item.getName() + "`,"
+                    + item.getCurrentBid() + "," + item.getFirstBid() + ","
+                    + item.getBuyPrice() + "," + item.getNumBids() + ","
+                    + item.getStarted() + "," + item.getEnds() + ",`"
+                    + item.getDescription() + "`,"
+                    + item.getSeller().getUserId();
 
-            File categoryData = new File("categoryData.csv");
-            FileWriter catFileWriter = new FileWriter(categoryData
-                    .getAbsoluteFile());
-            BufferedWriter catBufferedWriter = new BufferedWriter(catFileWriter);
-
-            File bidsData = new File("bidsData.csv");
-            FileWriter bidsFileWriter = new FileWriter(bidsData
-                    .getAbsoluteFile());
-            BufferedWriter bidsBufferedWriter = new BufferedWriter(
-                    bidsFileWriter);
+            bw.append(line);
+            bw.newLine();
+            bw.close();
         } catch (IOException e) {
             System.out.println("File error");
             System.exit(3);
         }
 
-        /** *********************************************************** */
+        appendCategory(item.getCategories(), item.getItemId());
+        appendUser(item.getSeller());
+        appendBid(item.getBids(), item.getItemId());
+    }
+
+    public static void appendBid(List<Bid> bids, int itemId) {
+        try {
+            File catData = new File("Bid.dat");
+            FileWriter fw = new FileWriter(catData.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            for (Bid bid : bids) {
+                bw.append(bid.getBidder().getUserId() + "," + itemId + ","
+                        + bid.getPostingTime() + "," + bid.getAmount());
+                bw.newLine();
+                appendUser(bid.getBidder());
+            }
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("File error");
+            System.exit(3);
+        }
+    }
+
+    public static void appendUser(User user) {
+        try {
+            File catData = new File("User.dat");
+            FileWriter fw = new FileWriter(catData.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            String line = user.getUserId() + "," + user.getRating() + ",`"
+                    + user.getLocation() + "`,`" + user.getCountry() + "`";
+
+            bw.append(line);
+            bw.newLine();
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("File error");
+            System.exit(3);
+        }
+    }
+
+    public static void appendCategory(List<String> categories, int itemId) {
+        try {
+            File catData = new File("Category.dat");
+            FileWriter fw = new FileWriter(catData.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            for (String category : categories) {
+                bw.append("`" + category + "`," + itemId);
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("File error");
+            System.exit(3);
+        }
     }
 
     /* parse all the items from the initial doc object */
@@ -217,7 +286,7 @@ class MyParser {
         for (Element e : myAuctions) {
             myItems.add(buildItem(e));
         }
-        
+
         return myItems;
     }
 

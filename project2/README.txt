@@ -10,7 +10,7 @@ Part B answers:
 
 1. Relations
 
-Items(item_id, item_name, current_bid, first_bid, num_bids, seller_id, started, ends, description) -> key: item_id
+Items(item_id, item_name, current_bid, first_bid, num_bids, Buy_price, seller_id, started, ends, description) -> key: item_id
 
 Users(user_id, rating, location, country) -> key: user_id
 
@@ -26,7 +26,7 @@ Item_Id, User_ID, Time -> amount
 
 3. Check of FDs
 
-R1(item_id, item_name, current_bid, first_bid, num_bids, seller_id, seller_rating, seller_location, seller_country, started, ends, description)
+R1(item_id, item_name, current_bid, first_bid, Buy_price, num_bids, seller_id, seller_rating, seller_location, seller_country, started, ends, description)
 R2(item_id, item_name, current_bid, first_bid, num_bids, seller_id, started, ends, description)
 R3(seller_id, seller_rating, seller_location, seller_country)
 

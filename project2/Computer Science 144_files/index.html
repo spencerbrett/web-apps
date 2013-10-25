@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0057)http://oak.cs.ucla.edu/cs144/projects/project2/index.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+.code {
+	background-color:#eeeeee;
+	border: solid 1px #000000;
+	font-family:"Courier New", Courier, mono;
+	font-size: .8em;
+	margin: 5px;
+	padding: 5px;
+}
+</style>
+	<style type="text/css"></style></head>
+
+	<body bgcolor="white" style="">
+		<center>
+			<font size="+2" color="#bb0000">CS144: Web Applications</font></center>
+		<table width="100%" border="0" cellspacing="10" cellpadding="4">
+			<tbody>
+				<tr>
+					<td bgcolor="#ccccff" width="100%">
+						<center>
+							<b>Project Part 2: Data Conversion and Loading</b><br>
+							<b>Due Friday, Oct. 25, 2013 11:00PM</b></center>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<ul>
+			<li><p><b>Submission deadline:</b> Programming work is submitted electronically and must be submitted by Friday at 11:00PM. However, we recognize that there might be last minute difficulty during submission process, so as long as you started your sumission process before 11:00PM, you have until 11:30PM to completely upload your submission. After 11:30PM, you will have to use grace period as follows.</p></li>
+
+<li><p><b>Late Policy:</b> Programming work submitted after the deadline but less than 24 hours late (i.e., by Saturday 11:00 PM) will be accepted but penalized 10%, and programming work submitted more than 24 hours but less than 48 hours late (i.e., by Sunday 11:00 PM) will be penalized 30%. No programming work will be accepted more than 48 hours late. Since emergencies do arise, each student is allowed a <i>total</i> of four unpenalized late days (four periods up to 24 hours each) for programming work, but no single assignment may be more than two days late.</p></li>
+
+<li><p><b>Honor Code reminder:</b> For more detailed discussion of the Honor Code as it pertains to CS144, please see the Assigned Work page under <a href="http://oak.cs.ucla.edu/cs144/projects/index.html#HONESTY">Honor Code</a>. In summary: You must indicate on all of your submitted work <i>any assistance</i> (human or otherwise) that you received. Any assistance received that is not given proper citation will be considered a violation of the Honor Code. In any event, you are responsible for understanding and being able to explain on your own all material that you submit.</p>
+
+		</li></ul>
+		<hr>
+		<h3>Overview</h3>
+		You will be given a large volume of data downloaded from the eBay web site and stored in XML files. You will examine the data and design a good relational schema for it. You will then write a Java program to transform the data from its XML form into MySQL's load file format, conforming to your relational schema. You will create your schema in your own MySQL database, load your transformed data, and test it by running some SQL queries. <b>Note that you won't be able to continue to Project 3 unless you complete this project. It is important that you finish this project on time to have enough time to do Project 3.</b><p></p>
+
+<p>By completing this project you will be able to learn:
+</p><ol>
+<li>How to parse an XML file in Java
+</li><li>How to place a Java class into a package
+</li><li>How to use Ant to help Java code compilation and execution
+</li><li>How to write a Unix shell script
+</li></ol>
+We will be providing relevant tutorials and references to help you learn the above topics.
+
+<h3>Part A: Examine the XML data files</h3>
+		We have already included an XML-encoded auction data set for you to use in your project in the <tt>$EBAY_DATA</tt> directory (which is <tt>/home/cs144/ebay-data</tt>) in our VM, which can also be <a href="http://oak.cs.ucla.edu/cs144/projects/project2/ebay-data.zip">downloaded here</a>:
+		<ol>
+			<li>
+				<p>As a <i>small data set</i> for initial experimentation and debugging we suggest you use just one file: <code>ebay-data/items-0.xml</code>. It contains 500 auctions, comprising about 900kb of plain-text data.</p>
+			</li>
+			<li>
+				<p>Your system also must work on the <i>large data set</i>, which consists of all 40 files: <code>ebay-data/items-?.xml</code>, for <code>?</code> = 0..39. There are a total of about 20,000 auctions, comprising about 38 megabytes of plain-text data.</p>
+			</li>
+		</ol>
+		Each XML data file is valid with respect to the XML DTD specified in the file <code>ebay-data/items.dtd</code>.
+		<p>Your first task is to examine the DTD and the XML files to completely understand the data you will be starting with. You will be translating this data into relations and loading it into MySQL server on our VM. Please read the auction data help file in <code>ebay-data/items.txt</code>. The provided data was captured at a single point in time. (Very specifically, it represents the point in time December 20th, 2001, one second after midnight.) It contains items that have been auctioned off in the past and items that are "currently" up for auction.</p>
+		<p>Note that UserIDs of sellers and bidders uniquely identify a user. Whenever one user appears in the data, his/her Rating, Location, Country information are the same. For more, read items.txt in the dataset.</p>
+
+		<h3>Part B: Design your relational schema</h3>Now that you understand the data you'll be working with, design a good relational schema for it.  Iterating through the following three steps should help you in the design process.<ol>
+			<p>
+				</p><li><p>List your relations. Please specify all keys that hold on each relation. You need not specify attribute types at this stage.</p></li>
+				<li><p>List all completely nontrivial functional dependencies that hold on each relation, excluding those that effectively specify keys.</p></li>
+				<li><p>Are all of your relations in <a href="http://db.grussell.org/section009.html">Boyce-Codd Normal Form</a> (BCNF)? If not, either redesign them and start over, or explain why you feel it is advantageous to use non-BCNF relations.</p></li>
+				<!--<li>
+					<p>List all nontrivial multivalued dependencies that hold on each relation, excluding those that are also functional dependencies. Are all of your relations in <a href="http://www.bkent.net/Doc/simple5.htm#label4">Fourth Normal Form</a> (4NF)? If not, either redesign them and start over, or explain why you feel it is advantageous to use non-4NF relations.</p>
+				</li>-->
+			<p></p>
+		</ol>
+
+
+
+Document these steps in the <tt>README.txt</tt> file for submission; see <b><a href="http://oak.cs.ucla.edu/cs144/projects/project2/index.html#SUBMIT">What to submit</a></b> below.
+		<h3>Part C: Write a data transformation program</h3>Next you will write a program that transforms the XML data into MySQL load files that are consistent with the relational schema you settled on in Part B. Remember that our <a href="http://oak.cs.ucla.edu/cs144/projects/mysql/index.html">MySQL tutorial</a> linked in Project 1 had a brief explanation on the MySQL LOAD command and the load file format. If necessary, read <a href="http://dev.mysql.com/doc/refman/5.0/en/load-data.html">MySQL LOAD command reference</a> to learn more details on MySQL load file.
+
+<p>To help you get started, we are providing a parser skeleton sample codes, <tt>MyParser.java</tt> and <tt>MyParserPrint.java</tt>, in the <tt>src</tt> directory of the <a href="http://oak.cs.ucla.edu/cs144/projects/project2/project2.zip">project2.zip</a> file.
+      Note that the two Java classes are defined as part of
+      the <tt>edu.ucla.cs.cs144</tt> package, which is why
+      <code>MyParser.java</code>
+      and <code>MyParserPrint.java</code> files are located in
+      the <tt>src/edu/ucla/cs/cs144</tt> directory (<tt>src</tt> is
+      the base directory of all Java code and the rest corresponds
+      to the package name hierarchy). If you are not
+      clear about what is a package and how a package name is related
+      to the source directory structure, read Section 1.8
+      of <a href="http://oak.cs.ucla.edu/cs144/projects/java/ctojava.pdf">A Crash Course from C++ to
+      Java</a>.</p>
+
+<p>The provided two Java files are almost identical, except that <tt>MyParserPrint.java</tt> has additional code to print out the parsed XML data to screen. In the sample codes, all of the parsing is done for you by invoking the <!--<a href="http://java.sun.com/webservices/jaxp/reference/faqs/index.html">--><a href="http://docs.oracle.com/javase/tutorial/jaxp/index.html">JDK's XML parser</a> (JAXP). You need to fill in code that processes the internal representation of the XML tree and produces MySQL load files according to the relational schema you designed in Part B. Detailed information is provided as comments in the skeleton code file <code>MyParser.java</code> in the zip file.</p>
+
+		<p>The zip file also contains a sample Ant build script, <tt>build.xml</tt>. Ant is a "build tool" similar to <tt>make</tt> but it is specifically designed for cross-platform Java development.
+You must read the following Ant tutorial
+to learn how to use Ant and write and modify an Ant script file (we will use this tool throuout the rest of the quarter):
+</p><ul><li><a href="http://oak.cs.ucla.edu/cs144/projects/ant/tutorial.html">A Short Tutorial on Ant</a></li></ul>
+Since Ant is preinstalled in our VM, you will be able to compile your Java code simply by typing <tt>ant</tt> in your command line (inside the directory where <tt>build.xml</tt> is).
+If you want to use the provided Ant build.xml script together with Eclipse, read <a href="http://oak.cs.ucla.edu/cs144/projects/ant/eclipse-ant.html">this instruction</a>.<p></p>
+
+<p>Note that the provided Ant script have targets "run" and "run-all". The target "run" executes the parser class <tt>edu.ucla.cs.cs144.MyParser</tt> on the single data file
+<tt>$EBAY_DATA/items-0.xml</tt> and the target "run-all" executes the class on all files at <tt>$EBAY_DATA/items-*.xml</tt>. You can use one of these two targets to test your code on the provided ebay data.  <i>We strongly suggest that you fully debug your program on the small data set before unleashing it on the large one.</i></p>
+
+		<p><b>Notes on MySQL Datatypes</b>
+		</p><p>We note that some of the <code>Description</code> elements in the XML data are quite long. If any text is longer than 4000 characters, you must <b>truncate it at 4000</b>. In particular, we suggest that you use the MySQL data type <code>VARCHAR(4000)</code> to store descriptions and during data transformation simply truncate any descriptions that will be too long to fit. For attributes representing dates/times, we suggest that you use MySQL's built-in <code>TIMESTAMP</code> type. For attributes representing money, we suggest you use <code>DECIMAL(8,2)</code> to specify a numeric type with 2 digits after the decimal point.</p>
+
+		<p>Note that in creating MySQL load files, you may have to reformat the input data to the one that MySQL expects.
+Information on the format of SQL <tt>TIMESTAMP</tt> type is available on the  <a href="http://dev.mysql.com/doc/refman/5.0/en/datetime.html">MySQL Dates and Times</a> page. You can use the Java class <tt>java.text.SimpleDateFormat</tt> to parse a date/time string in a particular format and to output it in a different format. See
+<a href="http://oak.cs.ucla.edu/cs144/projects/java/simpledateformat.html">the example code on this page</a>
+to learn how to use <tt>SimpleDateFormat.parse()</tt> and <tt>SimpleDateFormat.format()</tt> methods to parse and format date/time strings in Java.</p>
+
+		<!-- <p>You may find it useful to install and use an IDE capable of Java development, such as <a href="http://www.eclipse.org">Eclipse</a>, which is freely available.  Later on you may also find it useful to install various plugins to these environments which aid in web application development using Tomcat.  Note that we are not officially supporting any particular IDE, so the choice (and responsiblity) is entirely yours.</p> -->
+
+		<p><b>Duplicate elimination</b>
+		</p><p>When transforming the XML data to relational tuples you may discover that you generate certain tuples multiple times but only want to retain one copy. There are different ways to eliminate duplicates, including:
+
+
+		</p><ul>
+			<li>
+				<p>Coding duplicate-elimination as part of your transformation program.</p>
+			</li>
+			<li>
+				<p>Using Unix text utilities (e.g., <a href="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man1/sort.1.html">sort</a> and <a href="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man1/uniq.1.html">uniq</a>) directly on the generated load files to eliminate duplicate lines. These tools are preinstalled in our VM.</p>
+			</li>
+		</ul>
+			You may <i>NOT</i> rely on the MySQL bulk loader to eliminate duplicates. MySQL will generate an error but continue loading when a tuple with a duplicate value in a key attribute is encountered. However, using this "feature" to eliminate duplicates is an unaesthetic hack that also complicates our grading procedure, and it should be avoided.
+
+                        <p><strong>Notes on CR/LF issue:</strong> If your host OS is Windows, you need to pay particular attention to how each line of a text file ends. By convention, Windows uses a pair of CR (carriage return) and LF (line feed) characters to terminate lines. On the other hand, Unix (including Linux, Mac OS X, and tools in cygwin) use only a LF character. Therefore, problems arise when you are feeding a text file generated from a Windows program to a Unix tool (such as <tt>sort</tt>, <tt>uniq</tt> and <tt>mysql</tt>). Since the end of the line of the input file is different from what the tools expect, you may encounter unexpected behavior from these tools. If you encounter this problem, you may want to run the <tt>dos2unix</tt> command in VM on your Windows-generated text file. This command converts CR and LF at the end of each line in the input file to just LF. Type <tt>dos2unix --help</tt> to learn how to use this command.
+
+		</p><h3>Part D: Load your data into MySQL</h3>
+
+<p>Now create and populate your table(s) in MySQL inside the <tt>CS144</tt> database.  We suggest that you first debug the schema creation and loading process interactively using the MySQL command-line interface. When you are satisfied that everything is working, follow the instructions to set up for batch loading (see <b>Section D.3</b> below), which allows a database to be conveniently recreated from scratch with one command.
+
+		</p><h4>D.1 Creating your databases interactively</h4>
+		Using the command line interface to MySQL, issue  a set of "<code>CREATE TABLE</code>" commands for all of the relations in your schema. Some suggestions:
+		<ul>
+			<li><p>For efficiency we suggest that you specify a <code>PRIMARY KEY</code> for each table that has at least one key.</p>
+		</li></ul>
+		<p>Once the tables are created, load your data in MySQL.</p>
+		<h4>D.2 Maintaining your databases</h4>
+		You should consider two factors in the maintenance of your databases throughout the CS144 project:
+
+		<ol>
+			<li>
+				<p>Your MySQL databases are probably not backed up, so anything you need long-term should be saved on the file system as well.</p>
+			</li>
+			<li>
+				<p>As you start modifying data in a database, you will undoubtedly want the ability to get a "fresh start" easily from your original data.</p>
+			</li>
+		</ol>
+			We recommend that you establish a routine of saving all data in MySQL load files, and perhaps reloading the database each time you start working with it. Remember that you need to delete the contents of each table (or destroy and recreate the tables) before reloading. Otherwise, MySQL will happily append the new data to your old table, causing your table size to double, triple, quadruple, etc. To get rid of a table called T, you can use <tt>DROP TABLE</tt> command as follows:
+		<pre>  DROP TABLE T;
+</pre>
+		If you want to get rid of all tuples in <code>T</code> without deleting the table itself, you can issue the command:
+		<pre>  DELETE FROM T;
+</pre>
+		<h4>D.3 Automating the process</h4>
+			As we explained in our MySQL tutorial, MySQL provides a facility for reading a set of commands from a file and executing them in batch mode. You should use this facility for creating/(re)building databases and running sample queries, and you must use it extensively in your submitted work. (See <a href="http://oak.cs.ucla.edu/cs144/projects/project2/index.html#SUBMIT"><b>What to submit</b> </a>below.) For starters, create a command file called <code>create.sql</code> that includes the SQL commands for database and table creation that you debugged interactively (recall <b>Section D.1</b>). This file will look something like:
+			<pre>  CREATE TABLE Item ( .... );
+  CREATE TABLE AuctionUser ( ... );
+  ...
+</pre>
+		Similarly, create a second command file called <code>drop.sql</code> that destroys all your tables. This file will look something like:
+		<pre>  DROP TABLE Item;
+  DROP TABLE AuctionUser;
+  ...
+</pre>
+		Lastly, create a command file called <code>load.sql</code> that contains the appropriate MySQL commands to load data from a file into a table. The file will look something like:
+		<pre>  LOAD DATA LOCAL INFILE 'Item.dat' INTO TABLE Item ...
+  LOAD DATA LOCAL INFILE 'AuctionUser.dat' INTO TABLE AuctionUser ...
+  ...
+</pre>
+		<p>To automate the entire process, create a <em>bash shell script</em> called <code>runLoad.sh</code>. If you do not know what a shell script is or how to create one, first read our <a href="http://oak.cs.ucla.edu/cs144/projects/unix/shell.html">Tutorial on Shell Script</a>. Your script should do the following things.</p>
+		<ol>
+			<li>
+				<p>Drop any existing relevant tables in <tt>CS144</tt> database <strong>IF EXISTS</strong>.</p>
+			</li>
+			<li>
+				<p>Create all the relevant tables in <tt>CS144</tt> database.</p>
+			</li>
+			<li>
+				<p>Build and run your parser to generate fresh load files.</p>
+			</li>
+			<li>
+				<p>Load the data into MySQL.</p>
+			</li>
+			<li>
+				<p>Delete all temporary files (including your load file) that your parser generated</p>
+			</li>
+		</ol>
+			Here is a skeleton of what this script can look like (as a <a href="http://www.gnu.org/software/bash/bash.html">bash</a> script) when it includes all four steps:
+		<pre class="code">#!/bin/bash
+
+# Run the drop.sql batch file to drop existing tables
+# Inside the drop.sql, you sould check whether the table exists. Drop them ONLY if they exists.
+mysql CS144 &lt; drop.sql
+
+# Run the create.sql batch file to create the database and tables
+mysql CS144 &lt; create.sql
+
+# Compile and run the parser to generate the appropriate load files
+ant
+ant run-all
+...
+
+# If the Java code does not handle duplicate removal, do this now
+sort ...
+...
+
+# Run the load.sql batch file to load the data
+mysql CS144 &lt; load.sql
+
+# Remove all temporary files
+rm ...
+...
+</pre>
+
+<!--<p>The above script uses the input redirection operator <tt>&lt;</tt>. If you are not familiar with this operator, read <a href="../unix/index.html">Unix Tutorial for Beginners</a>. Pay particular attention to Part 3 of the tutorial that explains input/output redirection on Unix.</p>-->
+
+<p>In your final submission, please <b>make sure that the ant target "run-all" takes all data at <tt>$EBAY_DATA/items-*.xml</tt> and produces the output. The value of <tt>$EBAY_DATA</tt> should not be hard-coded in your ant script.</b> It should be obtained from the environment variable. Our provided <tt>build.xml</tt> follows this requirement.</p>
+
+<p>To run this script, make sure permissions are set properly by executing "<code>chmod u+x runLoad.sh</code>", then simply type "<code>./runLoad.sh</code>" at the shell prompt to run it. Again, <b>pay attention to the CR/LF issue if you modify your scripts using a Windows program. Run <tt>dos2unix</tt> in VM on the scripts if necessary.</b> Otherwise, you may get unexpected errors when you run your shell script.</p>
+
+<h3>Part E: Test your MySQL database</h3>
+
+The final step is to take your newly loaded database for a "test drive" by running a few SQL queries over it. As with your initial database creation, use MySQL to test your queries interactively, then set up a MySQL script file, named <tt>queries.sql</tt>, to be able to run them in batch mode later. First try some simple queries over one relation, then more complex queries involving joins and aggregation. Make sure the results look correct. When you are confident that everything is correct, write SQL queries for the following specific tasks:
+		<ol>
+			<li>
+				<p>Find the number of users in the database.</p>
+			</li>
+			<li>
+				<p>Find the number of sellers from "New York", (i.e., sellers whose location is <em>exactly</em> the string "New York"). <i>Pay special attention to case sensitivity. You should match the sellers from "New York" but not from "new york".</i></p>
+			</li>
+			<li>
+				<p>Find the number of auctions belonging to exactly four categories.</p>
+			</li>
+			<li>
+				<p>Find the ID(s) of current (unsold) auction(s) with the highest bid. <i>Remember that the data was captured at the point in time December 20th, 2001, one second after midnight, so you can use this time point to decide which auction(s) are current. Pay special attention to the current auctions without any bid.</i></p>
+			</li>
+			<li>
+				<p>Find the number of sellers whose rating is higher than 1000.</p>
+			</li>
+			<li>
+				<p>Find the number of users who are both sellers and bidders.</p>
+			</li>
+			<li>
+				<p>Find the number of categories that include at least one item with a bid of more than $100.</p>
+			</li>
+		</ol>
+		<p><b>Correctness check:</b> Your answers to the above seven queries over the large data set should be (in order): 13422, 80, 8365, 1046740686, 3130, 6717, 150</p>
+		<p>Put all seven queries in a MySQL batch script file called <code>queries.sql</code>. It should look like:</p>
+		<pre>  SELECT ... FROM ... ;
+  SELECT ... FROM ... ;
+  ...</pre>
+		Make sure that the order of your queries in the file is exactly the same as the order specified above.
+		<p></p>
+		<hr>
+		<h3><a id="SUBMIT" name="SUBMIT"></a>What to Submit</h3>
+You should submit a single file <b>project2.zip</b> that has the following packaging structure.
+<pre class="code">project2.zip
+ |
+ +- build.xml
+ |
+ +- create.sql
+ |
+ +- drop.sql
+ |
+ +- load.sql
+ |
+ +- queries.sql
+ |
+ +- runLoad.sh
+ |
+ +- README.txt
+ |
+ +- src
+ |   +- java source codes for parser (with your own naming/structure)
+ |
+ +- lib
+     +- external java libraries used
+</pre>
+
+Each file or directory is as following:
+		<ul>
+			<li>
+				Your MySQL batch files <b><code>create.sql</code>, <code>drop.sql</code>, <code>load.sql</code></b>, and <b><code>queries.sql</code></b>. <i>Do not submit the output produced by running these files.</i>
+			</li>
+			<li>
+				A plaintext file named <b><code>README.txt</code></b>, containing your relational schema design, answers to the 3 items listed in Part B, as well as anything else you'd like to document. <p></p></li>
+			<li>
+				Your ant <b><code>build.xml</code></b> script.  Your <tt>build.xml</tt> script <b>MUST</b> meet the following requirements:
+			<ul>
+			<li>The default target must compile your Java files.
+			</li><li>The target "run-all" must invoke your parser and pass all files at <tt>$EBAY_DATA/items-*.xml</tt> to your parser as the parameter. The value of <tt>$EBAY_DATA</tt> MUST NOT be hard-coded. It should be obtained from the environment variable.
+			</li></ul>
+			</li>
+			<li>
+				Your <b><code>runLoad.sh</code></b> script developed in Section D.3 above.
+Your <tt>runLoad.sh</tt> script <b>MUST</b> meet the following requirements:
+			<ul>
+			<li>Your script must delete all your temporary files (including your load file) at the end.
+			</li><li>All tables must be created in <tt>CS144</tt> database.
+			</li><li>Your script must use the default user account <tt>cs144</tt> to connect to MySQL.
+			</li><li>Your script must contain ONLY relative paths. DO NOT use any absolute paths in your script.
+			</li></ul>
+			</li>
+			<li>
+				<b><code>src</code></b> directory: Your parser source code file(s). <i>Do not submit the binary version of your parser.</i>
+			</li>
+			<li>
+				<b><code>lib</code></b> directory: Any external Java library files (.jar files) that you use and are not available in our VM.
+			</li>
+	</ul>
+	<p>Once your submission directory is properly assembled, with no extraneous files, create a .zip file of your submission directory and submit via our submission page at <a href="http://oak.cs.ucla.edu/cs144/projects/project2/submit/submit.html">http://oak.cs.ucla.edu/cs144/projects/project2/submit/submit.html</a>.  You may resubmit as many times as you like, however only the latest submission will be saved, and those are what we will use for grading your work and determining late penalties. <i>Submissions via email will not be accepted.</i></p>
+		<p><b>Important Notes:</b>
+		</p><ul>
+			<li>
+				It is an <b>EXTREMELY GOOD IDEA</b> to test your parser compilation and invokation steps and ensure that they are self-sufficient (and that you are not relying on anything that have been installed by you separately).
+			</li>
+			<li>
+				Please do NOT submit the output of your parser code and scripts, the binary version of your parser, or the eBay data.
+			</li>
+			<li>
+				As always, remember to allow sufficient time to prepare your submission once your work is complete.
+			</li>
+		</ul>
+
+
+<h3>Testing of Your Submission</h3>
+In order to help you ensure the correct packaging of your submission, we have made a "grading script" that unzips your submission to a temporary directory and executes your files to test whether they are likely to run OK on the grader's machine. The grading script for Project 2 is <tt>$HOME/grading/scripts/p2</tt> and can be executed like:
+<pre class="code">cs144@cs144:~$ ~/grading/scripts/p2 project2.zip
+</pre>
+(if your project2.zip file is not located in the current directory, you need to add the path to the zip file before project2.zip).
+
+<p>You <b>MUST</b> test your submission using the script before your final submission to minimize the chance of an unexpected error during grading.
+
+When evertything runs properly, you will see an output similar to the following from the grading script:
+	</p><pre class="code">Running your runLoad.sh script...
+   ...
+   &lt;output from your runLoad.sh&gt;
+   ...
+Running your query.sql script...
+COUNT(*)
+13422
+COUNT(*)
+80
+COUNT(*)
+8365
+ITEMID
+1046740686
+COUNT(*)
+3130
+COUNT(*)
+6717
+COUNT(DISTINCT CATEGORY)
+150
+
+
+Finished running your queries.
+Please make sure that you got correct results from your queries
+</pre>
+<h3>Grading Criteria</h3>
+<h4>Breakdown</h4>
+<ul>
+<li>Relation schema desigin (10%)
+</li>
+
+<li>Transformation runs without error: java compilation, import file generation, database load are done without any error (20%)
+</li>
+
+<li>Transformation correctness: testing with queries.sql, using various XML data (70%)
+</li>
+
+</ul>
+
+<h4>Correctness v.s Efficiency</h4>
+    We grade your project based on the "correctness" of your work. Efficiency of your
+    work is not a primary concern, but we do encourage you to optimize your work to meet
+    our expectation(optional). However, your codes MUST complete in a reasonable time:
+    <ul>
+      <li>Project 2 (including answering 7 queries): should complete in 20~30 seconds.
+      No penalty if your
+      work completes in 2 minutes; after that, 20% off of your entire project score.
+      Your code will be considered as a failed work if it takes 5 minutes or more. </li>
+    </ul>
+
+
+
+
+
+</body></html>

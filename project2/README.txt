@@ -8,7 +8,7 @@ UID: 704071250
 
 Part B answers:
 
-1. Relations
+1. Relations Schema
 
 Items(item_id, item_name, current_bid, first_bid, num_bids, Buy_price, seller_id, started, ends, description) -> key: item_id
 
@@ -26,8 +26,8 @@ Item_Id, User_ID, Time -> amount
 
 3. Check of FDs
 
-R1(item_id, item_name, current_bid, first_bid, Buy_price, num_bids, seller_id, seller_rating, seller_location, seller_country, started, ends, description)
-R2(item_id, item_name, current_bid, first_bid, num_bids, seller_id, started, ends, description)
-R3(seller_id, seller_rating, seller_location, seller_country)
+Each of the FDs in part 2 have keys on the left side and there are no other FDs that don't have a key on the left, thus the schema is in BCNF.
 
+Additional Notes:
 
+Our schema uses nulls for three of the columns that are optional: Buy_price, Location, and Country. We think that this is better instead of making the schema more complicated. 

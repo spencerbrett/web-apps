@@ -180,21 +180,6 @@ class MyParser {
             appendItemDataFile(currentItem);
         }
 
-        // try {
-        // File itemsData = new File("itemsData.csv");
-        // FileWriter itemFileWriter = new FileWriter(itemsData
-        // .getAbsoluteFile());
-        // BufferedWriter itemBufferedWriter = new BufferedWriter(
-        // itemFileWriter);
-        //
-        // itemBufferedWriter.write("Damn it, Mal!");
-        // itemBufferedWriter.append(" and so we shall go to war!");
-        // itemBufferedWriter.close();
-        // } catch (IOException e) {
-        // System.out.println("File error");
-        // System.exit(3);
-        // }
-
         /** *********************************************************** */
     }
 

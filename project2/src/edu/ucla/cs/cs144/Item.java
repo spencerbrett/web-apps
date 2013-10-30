@@ -63,7 +63,7 @@ public class Item {
 
     public String getBuyPrice() {
         if (buyPrice == null)
-            return "";
+            return "NULL";
         else
             return buyPrice.toString();
     }

@@ -14,6 +14,15 @@ your Lucene index.
 To build and run the sample code, use the "run" ant target inside
 the directory with build.xml by typing "ant run".
 
+For our Lucene inverted index we store ItemId, Name, Description, and string of
+categories separated by commas. We don't tokenize the ID since it's not part
+of the query. All the other fields are tokenized. So far we are using the
+default analyzer. Since we haven't implemented the search functionality yet
+we weren't able to test the effectiveness of those settings yet and we might
+have to make some changes for the final submission next week if we discover
+problems. We also store a concatanation of all those fields in a "content" key
+for the simple search functionality so it searches keywords in all those fields.
+
 The default storage engine for MySQL is MyISAM, but I decided I wanted to use
 foreign key on certain tables for data consistency. Therefore, I needed to modify
 the storage engine for our tables to be InnoDB to support foreign keys. In the 

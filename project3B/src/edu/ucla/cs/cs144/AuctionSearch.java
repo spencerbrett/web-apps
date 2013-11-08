@@ -2,6 +2,7 @@ package edu.ucla.cs.cs144;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -90,6 +91,56 @@ public class AuctionSearch implements IAuctionSearch {
 
     public String getXMLDataForItemId(String itemId) {
         // TODO: Your code here!
+        String xmlData;
+        try {
+        	conn = DbManager.getConnection(true);
+            PreparedStatement getItemData = conn.prepareStatement(
+            	"SELECT Name, Currently, First_Bid, Number_of_Bids, Started, Ends, Description"+
+            	 "FROM Item WHERE ItemID = ?");
+            PreparedStatement getItemCategories = conn.prepareStatement(
+            	"SELECT Category FROM Category WHERE ItemID = ?");
+            PreparedStatement getSellerData = conn.prepareStatement(
+            	"SELECT * FROM User WHERE UserID = ?");
+            PreparedStatement getItemBids = conn.prepareStatement(
+            	"SELECT u.UserID, u.Rating, u.Location, u.Country, b.Time, b.Amount"+
+				 "FROM User AS u"+ 
+				 "INNER JOIN Bid AS b"+
+				 "ON u.UserID = b.UserID"+
+   				 "WHERE b.ItemID = ?");
+
+            //cast function argument as integer to set for queries
+            int ItemId = Integer.parseInt(itemId);
+
+            //set up variables for getting item data
+            Item myItem = new Item();
+            
+            // Get Item data and load it into prepared variables
+            getItemData.setInt(1, ItemId);
+            ResultSet itemResultSet = getItemData.executeQuery();
+            myItem.setName(itemResultSet.getString(1));
+            myItem.setCurrently(itemResultSet.getFloat(2));
+            myItem.setFirst_Bid(itemResultSet.getFloat(3));
+            myItem.setNumber_of_Bids(itemResultSet.getInt(4));
+            myItem.setStarted(itemResultSet.getDate(5));
+            myItem.setEnds(itemResultSet.getDate(6));
+            myItem.setDescription(itemResultSet.getString(7));
+
+            //Get Categories and load them into Categories String in XML format
+            String Categories = "";
+            getItemCategories.setInt(1, ItemId);
+            ResultSet catResultSet = getItemCategories.executeQuery();
+
+            while(catResultSet.next()){
+            	Categories += "  <Category>"+catResultSet.getString(1)+"</Category>\n";
+            }
+
+            //Get Seller Data
+            
+
+        }
+        catch (SQLException ex) {
+            System.err.println(ex);
+        }
         return null;
     }
 

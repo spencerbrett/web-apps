@@ -98,12 +98,11 @@ public class AuctionSearch implements IAuctionSearch {
     }
 
     public String getXMLDataForItemId(String itemId) {
-        // TODO: Your code here!
-        String xmlData;
+        String xmlData = null;
         try {
         	conn = DbManager.getConnection(true);
             PreparedStatement getItemData = conn.prepareStatement(
-            	"SELECT Name, Currently, First_Bid, Number_of_Bids, Started, Ends, Description"+
+            	"SELECT Name, Currently, First_Bid, Number_of_Bids, Started, Ends, SellerID, Description"+
             	 "FROM Item WHERE ItemID = ?");
             PreparedStatement getItemCategories = conn.prepareStatement(
             	"SELECT Category FROM Category WHERE ItemID = ?");
@@ -131,25 +130,52 @@ public class AuctionSearch implements IAuctionSearch {
             myItem.setNumber_of_Bids(itemResultSet.getInt(4));
             myItem.setStarted(itemResultSet.getDate(5));
             myItem.setEnds(itemResultSet.getDate(6));
-            myItem.setDescription(itemResultSet.getString(7));
+            myItem.setDescription(itemResultSet.getString(8));
 
-            //Get Categories and load them into Categories String in XML format
-            String Categories = "";
+            //Get Categories and load them into Categories List
             getItemCategories.setInt(1, ItemId);
             ResultSet catResultSet = getItemCategories.executeQuery();
 
             while(catResultSet.next()){
-            	Categories += "  <Category>"+catResultSet.getString(1)+"</Category>\n";
+            	myItem.addToCatList(catResultSet.getString(1));
             }
 
-            //Get Seller Data
+            //Get Bids and load them into Bid List
+            getItemBids.setInt(1, ItemId);
+            ResultSet bidResultSet = getItemBids.executeQuery();
             
-
+            while(bidResultSet.next()){
+            	User myBidder = new User();
+            	Bid myBid = new Bid();
+            	myBidder.setUserID(bidResultSet.getString(1));
+            	myBidder.setRating(bidResultSet.getInt(2));
+            	myBidder.setLocation(bidResultSet.getString(3));
+            	myBidder.setLocation(bidResultSet.getString(4));
+            	myBid.setBidder(myBidder);
+            	myBid.setTime(bidResultSet.getDate(5));
+            	myBid.setAmount(bidResultSet.getFloat(6));
+            	myItem.addToBidList(myBid);
+            	
+            }
+            //Set up variables for getting Seller Data
+            User mySeller = new User();
+            
+            //Get Seller data and load it into prepared variables
+            getSellerData.setString(1, itemResultSet.getString(7));
+            ResultSet sellerResultSet = getSellerData.executeQuery();
+            
+            mySeller.setUserID(sellerResultSet.getString(1));
+            mySeller.setRating(sellerResultSet.getInt(2));
+            mySeller.setLocation(sellerResultSet.getString(3));
+            mySeller.setCountry(sellerResultSet.getString(4));
+            myItem.setSeller(mySeller);
+            
+            xmlData = myItem.generateXML();
         }
         catch (SQLException ex) {
             System.err.println(ex);
         }
-        return null;
+        return xmlData;
     }
 
     public String echo(String message) {

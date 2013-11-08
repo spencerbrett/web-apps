@@ -13,7 +13,12 @@ public class User {
 		Location = location;
 		Country = country;
 	}
-
+	public User() {
+		UserID = null;
+		Rating = 0;
+		Location = null;
+		Country = null;
+	}
 	public String getCountry() {
 		return Country;
 	}

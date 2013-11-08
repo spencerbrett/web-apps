@@ -13,7 +13,12 @@ public class Bid {
 		Time = time;
 		Amount = amount;
 	}
-
+	public Bid() {
+		super();
+		Bidder = null;
+		Time = null;
+		Amount = 0;
+	}
 	public float getAmount() {
 		return Amount;
 	}

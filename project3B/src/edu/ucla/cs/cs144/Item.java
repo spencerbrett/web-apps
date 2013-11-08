@@ -9,10 +9,45 @@ public class Item {
     private float Currently, First_Bid;
     private Date Started, Ends;
     private String Name, Description, SellerID;
-    private List<Category> CategoryList;
-    private List<Bid> BidList;
+    private List<String> CategoryList;
+    private List<Bid> Bids;
     private User seller;
-	
+    
+    public String generateXML(){
+    	String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    	xml += "<Item ItemID=\""+ItemID+"\">\n";
+    	xml += "  <Name>"+Name+"</Name>\n";
+    	for(String cat : CategoryList){
+    		xml += "  <Category>"+cat+"</Category>\n";
+    	}
+    	xml += "  <Currently>$"+String.format("%.2f",Currently)+"</Currently>\n";
+    	xml += "  <First_Bid>$"+String.format("%.2f",First_Bid)+"</First_Bid>\n";
+    	xml += "  <Number_of_Bids>"+Number_of_Bids+"</Number_of_Bids>\n";
+    	if(Bids.isEmpty()){
+    		xml += "  <Bids/>\n";
+    	}
+    	else {
+    		xml += "  <Bids>\n";
+    		for(Bid b : Bids){
+    			xml += "    <Bid>";
+    			xml += "      <Bidder UserID=\""+b.getBidder().getUserID()+"\" Rating=\""+b.getBidder().getRating()+"\">\n";
+    			xml += "        <Location>"+b.getBidder().getLocation()+"</Location>\n";
+    			xml += "        <Country>"+b.getBidder().getCountry()+"</Country>\n";
+    			xml += "      </Bidder>\n";
+    			xml += "    </Bid>\n";
+    		}
+    		xml += "  </Bids>\n";
+    	}
+    	xml += "  <Location>"+seller.getLocation()+"</Location>\n";
+    	xml += "  <Country>"+seller.getCountry()+"</Country>\n";
+    	// Check to make sure this date is formatted correctly
+    	xml += "  <Started>"+Started.toString()+"</Started>\n";
+    	xml += "  <Ends>"+Ends.toString()+"</Ends>\n";
+    	xml += "  <Seller UserID=\""+seller.getUserID()+"\" Rating=\""+seller.getRating()+"\"/>\n";
+    	xml += "  <Description>"+Description+"</Description>\n";
+    	xml += "</Item>\n";
+    	return xml;
+    }
     public int getItemID() {
     	return ItemID;
     }
@@ -20,21 +55,21 @@ public class Item {
     	ItemID = itemID;
     }
     public List<Bid> getBidList() {
-		return BidList;
+		return Bids;
 	}
 	public void setBidList(List<Bid> bidList) {
-		BidList = bidList;
+		Bids = bidList;
 	}
 	public void addToBidList(Bid myBid) {
-		BidList.add(myBid);
+		Bids.add(myBid);
 	}
-	public List<Category> getCategoryList() {
+	public List<String> getCategoryList() {
 		return CategoryList;
 	}
-	public void setCategoryList(List<Category> categoryList) {
+	public void setCategoryList(List<String> categoryList) {
 		CategoryList = categoryList;
 	}
-	public void addToCatList(Category myCategory) {
+	public void addToCatList(String myCategory) {
 		CategoryList.add(myCategory);
 	}
 	public float getCurrently() {

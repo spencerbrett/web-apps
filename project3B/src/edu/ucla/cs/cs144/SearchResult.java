@@ -1,6 +1,6 @@
 package edu.ucla.cs.cs144;
 
-public class SearchResult {
+public class SearchResult implements Comparable<SearchResult> {
 	private String itemId;
 	private String name;
     
@@ -26,4 +26,14 @@ public class SearchResult {
 	public void setName(String name) {
 		this.name = name;
 	}
+    
+    public int compareTo(SearchResult sr) {
+        if (Integer.parseInt(this.itemId) < Integer.parseInt(sr.itemId)) {
+            return -1;
+        } else if (this.itemId.equals(sr.itemId)) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }

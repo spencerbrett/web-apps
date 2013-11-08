@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.lucene.LucenePackage;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -17,6 +18,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.text.SimpleDateFormat;
@@ -67,24 +69,30 @@ public class AuctionSearch implements IAuctionSearch {
             int numResultsToReturn) {
 
         init();
-        Hits hits = null;
+        SearchResult[] results = null;
         try {
-            hits = performSearch(query);
+            Hits hits = performSearch(query);
+            results = parseHits(hits, numResultsToSkip, numResultsToReturn);
         } catch (IOException e) {
             System.out.println(e);
         } catch (ParseException e) {
             System.out.println(e);
         }
 
-        SearchResult[] results = parseHits(hits, numResultsToSkip,
-                numResultsToReturn);
-
-        return new SearchResult[0];
+        return results;
     }
 
     public SearchResult[] advancedSearch(SearchConstraint[] constraints,
             int numResultsToSkip, int numResultsToReturn) {
-        // TODO: Your code here!
+
+        init();
+        try {
+            conn = DbManager.getConnection(true);
+            getAdvancedResults(constraints);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
         return new SearchResult[0];
     }
 
@@ -97,17 +105,97 @@ public class AuctionSearch implements IAuctionSearch {
         return message;
     }
 
+    private void getAdvancedResults(SearchConstraint[] constraints) {
+        boolean needsJoin = false;
+        for (SearchConstraint constraint : constraints) {
+            if (constraint.getFieldName().equals(FieldName.BidderId)) {
+                needsJoin = true;
+            }
+        }
+
+        String luceneQuery = null;
+        String sqlQuery = null;
+
+        for (SearchConstraint constraint : constraints) {
+            if (constraint.getFieldName().equals(FieldName.ItemName)) {
+                luceneQuery = constructLuceneQuery(luceneQuery, "name",
+                        constraint.getValue());
+            } else if (constraint.getFieldName().equals(FieldName.Category)) {
+                luceneQuery = constructLuceneQuery(luceneQuery, "categories",
+                        constraint.getValue());
+            } else if (constraint.getFieldName().equals(FieldName.Description)) {
+                luceneQuery = constructLuceneQuery(luceneQuery, "description",
+                        constraint.getValue());
+            } else if (constraint.getFieldName().equals(FieldName.SellerId)) {
+                sqlQuery = constructSqlQuery(sqlQuery, "Item.SellerId",
+                        constraint.getValue(), needsJoin);
+            } else if (constraint.getFieldName().equals(FieldName.BuyPrice)) {
+                sqlQuery = constructSqlQuery(sqlQuery, "Item.Buy_price",
+                        constraint.getValue(), needsJoin);
+            } else if (constraint.getFieldName().equals(FieldName.EndTime)) {
+                sqlQuery = constructSqlQuery(sqlQuery, "Item.Ends", constraint
+                        .getValue(), needsJoin);
+            } else if (constraint.getFieldName().equals(FieldName.BidderId)) {
+                sqlQuery = constructSqlQuery(sqlQuery, "Bid.UserId", constraint
+                        .getValue(), needsJoin);
+            }
+        }
+
+        System.out.println("Lucene Query: " + luceneQuery);
+        System.out.println("SQL Query: " + sqlQuery);
+    }
+
+    private String constructSqlQuery(String query, String column, String value,
+            boolean needsJoin) {
+        if (query == null && needsJoin) {
+            query = "SELECT ItemId, Name FROM Item JOIN Bid on Item.ItemId = Bid.ItemId"
+                    + " WHERE " + column + "=" + value;
+        } else if (query == null && !needsJoin) {
+            query = "SELECT ItemId, Name FROM Item WHERE " + column + "="
+                    + value;
+        } else {
+            query = query + " AND " + column + "=" + value;
+        }
+        return query;
+    }
+
+    private String constructLuceneQuery(String query, String field, String value) {
+        if (query == null) {
+            query = field + ":" + value;
+        } else {
+            query = query + " AND " + field + ":" + value;
+        }
+
+        return query;
+    }
+
     private Hits performSearch(String queryString) throws IOException,
             ParseException {
         Query query = parser.parse(queryString);
         Hits hits = searcher.search(query);
         return hits;
     }
-    
-    private SearchResult[] parseHits(Hits hits, int numToSkip, int numToReturn) {
-        
-        
-        
-        return new SearchResult[0];
+
+    private SearchResult[] parseHits(Hits hits, int numToSkip, int numToReturn)
+            throws IOException {
+
+        int size = 0;
+        int endCondition = 0;
+        if (numToReturn == 0 || hits.length() < numToReturn + numToSkip) {
+            size = hits.length() - numToSkip;
+            endCondition = hits.length();
+        } else {
+            size = numToReturn;
+            endCondition = numToReturn + numToSkip;
+        }
+        SearchResult[] results = new SearchResult[size];
+
+        for (int i = numToSkip; i < endCondition; i++) {
+            Document doc = hits.doc(i);
+            results[i - numToSkip] = new SearchResult(doc.get("id"), doc
+                    .get("name"));
+        }
+
+        return results;
     }
 }

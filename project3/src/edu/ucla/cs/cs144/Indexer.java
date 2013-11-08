@@ -44,7 +44,7 @@ public class Indexer {
 
             conn = DbManager.getConnection(true);
             PreparedStatement getItems = conn
-                    .prepareStatement("SELECT ItemID, Name, Description FROM Item LIMIT 10");
+                    .prepareStatement("SELECT ItemID, Name, Description FROM Item");
             PreparedStatement getItemCategories = conn
                     .prepareStatement("SELECT Category FROM Category WHERE ItemID = ?");
 

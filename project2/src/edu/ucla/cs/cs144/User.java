@@ -11,7 +11,7 @@ public class User {
 
     public String getCountry() {
         if (country == null) {
-            return "";
+            return "\\N";
         } else {
             return country;
         }
@@ -23,7 +23,7 @@ public class User {
 
     public String getLocation() {
         if (location == null) {
-            return "";
+            return "\\N";
         } else {
             return location;
         }

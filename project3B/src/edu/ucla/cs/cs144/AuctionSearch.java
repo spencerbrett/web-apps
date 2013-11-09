@@ -229,10 +229,13 @@ public class AuctionSearch implements IAuctionSearch {
 
         Set<SearchResult> results = null;
         try {
-            Hits hits = null;
-            if (luceneQuery != null) {
-                hits = performSearch(luceneQuery);
+            if (luceneQuery == null && sqlQuery != null) {
+                Set<SearchResult> sqlResults = extractSqlResults(sqlQuery);
+                return sqlResults;
+            } else if (luceneQuery != null && sqlQuery == null) {
+                
             }
+            Hits hits = performSearch(luceneQuery);
             results = extractLuceneResults(hits);
             Set<SearchResult> sqlResults = extractSqlResults(sqlQuery);
             results.retainAll(sqlResults);
@@ -249,7 +252,7 @@ public class AuctionSearch implements IAuctionSearch {
             throws SQLException {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
-        Set<SearchResult> sqlResults = new HashSet<SearchResult>();
+        Set<SearchResult> sqlResults = new LinkedHashSet<SearchResult>();
 
         while (rs.next()) {
             Integer ItemId;
@@ -263,8 +266,13 @@ public class AuctionSearch implements IAuctionSearch {
 
     private Set<SearchResult> extractLuceneResults(Hits hits)
             throws IOException {
+        
+        int size = 0;
+        if (hits != null) {
+            size = hits.length();
+        }
         Set<SearchResult> luceneResults = new LinkedHashSet<SearchResult>();
-        for (int i = 0; i < hits.length(); i++) {
+        for (int i = 0; i < size; i++) {
             Document doc = hits.doc(i);
             luceneResults.add(new SearchResult(doc.get("id"), doc.get("name")));
         }
@@ -297,6 +305,9 @@ public class AuctionSearch implements IAuctionSearch {
 
     private Hits performSearch(String queryString) throws IOException,
             ParseException {
+        if (queryString == null) {
+            return null;
+        }
         Query query = parser.parse(queryString);
         Hits hits = searcher.search(query);
         return hits;
@@ -314,13 +325,14 @@ public class AuctionSearch implements IAuctionSearch {
             size = numToReturn;
             endCondition = numToReturn + numToSkip;
         }
-        SearchResult[] arrayResults = results.toArray(new SearchResult[results.size()]);
+        SearchResult[] arrayResults = results.toArray(new SearchResult[results
+                .size()]);
         SearchResult[] formatedResults = new SearchResult[size];
-        
+
         for (int i = numToSkip; i < endCondition; i++) {
             formatedResults[i - numToSkip] = arrayResults[i];
         }
-        
+
         return formatedResults;
     }
 

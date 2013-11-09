@@ -102,31 +102,45 @@ public class AuctionSearch implements IAuctionSearch {
     }
 
     public String getXMLDataForItemId(String itemId) {
-        String xmlData = null;
-        try {
+    	// Cast ItemID as an Integer
+    	int ItemId = Integer.parseInt(itemId);
+    	
+    	// Build Item object from DB tables using ItemId
+    	Item myItem = constructItemFromDB(ItemId);
+    	
+    	// Construct XML as String using Item data and following Item Schema
+    	String xmlData = myItem.generateXML();
+        
+        return xmlData;
+    }
+    public Item constructItemFromDB(int ItemId) {
+    	Item myItem = new Item();
+    	try {
             conn = DbManager.getConnection(true);
-            PreparedStatement getItemData = conn
-                    .prepareStatement("SELECT Name, Currently, First_Bid, Number_of_Bids, Started, Ends, SellerID, Description"
-                            + "FROM Item WHERE ItemID = ?");
-            PreparedStatement getItemCategories = conn
-                    .prepareStatement("SELECT Category FROM Category WHERE ItemID = ?");
-            PreparedStatement getSellerData = conn
-                    .prepareStatement("SELECT * FROM User WHERE UserID = ?");
-            PreparedStatement getItemBids = conn
-                    .prepareStatement("SELECT u.UserID, u.Rating, u.Location, u.Country, b.Time, b.Amount"
-                            + "FROM User AS u"
-                            + "INNER JOIN Bid AS b"
-                            + "ON u.UserID = b.UserID" + "WHERE b.ItemID = ?");
+            PreparedStatement getItemData = conn.prepareStatement(
+            		"SELECT Name, Currently, First_Bid, Number_of_Bids, Started, Ends, SellerID, Description " +
+            	    "FROM Item WHERE ItemID = ?");
+            PreparedStatement getItemCategories = conn.prepareStatement(
+            		"SELECT Category FROM Category WHERE ItemID = ?");
+            PreparedStatement getSellerData = conn.prepareStatement(
+            		"SELECT * FROM User WHERE UserID = ?");
+            PreparedStatement getItemBids = conn.prepareStatement(
+            		"SELECT u.UserID, u.Rating, u.Location, u.Country, b.Time, b.Amount "
+                  + "FROM User AS u "
+                  + "INNER JOIN Bid AS b "
+                  + "ON u.UserID = b.UserID " + "WHERE b.ItemID = ?");
 
-            // cast function argument as integer to set for queries
-            int ItemId = Integer.parseInt(itemId);
 
             // set up variables for getting item data
-            Item myItem = new Item();
-
+            myItem.setItemID(ItemId);
+            
             // Get Item data and load it into prepared variables
             getItemData.setInt(1, ItemId);
             ResultSet itemResultSet = getItemData.executeQuery();
+            if(!itemResultSet.next()) {
+            	System.err.println("Invalid Item ID in constructItemFromDB.");
+            	System.exit(1);
+            }
             myItem.setName(itemResultSet.getString(1));
             myItem.setCurrently(itemResultSet.getFloat(2));
             myItem.setFirst_Bid(itemResultSet.getFloat(3));
@@ -138,22 +152,22 @@ public class AuctionSearch implements IAuctionSearch {
             // Get Categories and load them into Categories List
             getItemCategories.setInt(1, ItemId);
             ResultSet catResultSet = getItemCategories.executeQuery();
-
+            
             while (catResultSet.next()) {
-                myItem.addToCatList(catResultSet.getString(1));
+            	String cat = catResultSet.getString(1);
+                myItem.addToCatList(cat);
             }
-
+            
             // Get Bids and load them into Bid List
             getItemBids.setInt(1, ItemId);
             ResultSet bidResultSet = getItemBids.executeQuery();
-
             while (bidResultSet.next()) {
                 User myBidder = new User();
                 Bid myBid = new Bid();
                 myBidder.setUserID(bidResultSet.getString(1));
                 myBidder.setRating(bidResultSet.getInt(2));
                 myBidder.setLocation(bidResultSet.getString(3));
-                myBidder.setLocation(bidResultSet.getString(4));
+                myBidder.setCountry(bidResultSet.getString(4));
                 myBid.setBidder(myBidder);
                 myBid.setTime(bidResultSet.getDate(5));
                 myBid.setAmount(bidResultSet.getFloat(6));
@@ -166,20 +180,21 @@ public class AuctionSearch implements IAuctionSearch {
             // Get Seller data and load it into prepared variables
             getSellerData.setString(1, itemResultSet.getString(7));
             ResultSet sellerResultSet = getSellerData.executeQuery();
-
+            
+            if(!sellerResultSet.next()){
+            	System.err.println("No Seller Found for Item in getXMLDataForItemID. Invalid Data");
+            	System.exit(1);
+            }
             mySeller.setUserID(sellerResultSet.getString(1));
             mySeller.setRating(sellerResultSet.getInt(2));
             mySeller.setLocation(sellerResultSet.getString(3));
             mySeller.setCountry(sellerResultSet.getString(4));
             myItem.setSeller(mySeller);
-
-            xmlData = myItem.generateXML();
         } catch (SQLException ex) {
             System.err.println(ex);
         }
-        return xmlData;
+        return myItem;
     }
-
     public String echo(String message) {
         return message;
     }

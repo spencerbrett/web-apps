@@ -28,13 +28,13 @@ public class AuctionSearchTest {
                 "5.99");
         SearchConstraint[] constraints = { constraint };
         SearchResult[] advancedResults = as.advancedSearch(constraints, 0, 20);
-        System.out.println("Advanced Seacrh");
+        System.out.println("Advanced Search");
         System.out.println("Received " + advancedResults.length + " results");
         for (SearchResult result : advancedResults) {
             System.out.println(result.getItemId() + ": " + result.getName());
         }
 
-        String itemId = "1497595357";
+        String itemId = "1497497054";
         String item = as.getXMLDataForItemId(itemId);
         System.out.println("XML data for ItemId: " + itemId);
         System.out.println(item);

@@ -1,5 +1,6 @@
 package edu.ucla.cs.cs144;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,10 @@ public class Item {
     private List<Bid> Bids;
     private User seller;
     
+    public Item(){
+        CategoryList = new ArrayList<String>();
+        Bids = new ArrayList<Bid>();
+    }
     public String generateXML(){
     	String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     	xml += "<Item ItemID=\""+ItemID+"\">\n";
@@ -29,10 +34,14 @@ public class Item {
     	else {
     		xml += "  <Bids>\n";
     		for(Bid b : Bids){
-    			xml += "    <Bid>";
+    			xml += "    <Bid>\n";
     			xml += "      <Bidder UserID=\""+b.getBidder().getUserID()+"\" Rating=\""+b.getBidder().getRating()+"\">\n";
-    			xml += "        <Location>"+b.getBidder().getLocation()+"</Location>\n";
-    			xml += "        <Country>"+b.getBidder().getCountry()+"</Country>\n";
+    			if(b.getBidder().getLocation() != null){
+    				xml += "        <Location>"+b.getBidder().getLocation()+"</Location>\n";
+    			}
+    			if(b.getBidder().getCountry() != null){
+    				xml += "        <Country>"+b.getBidder().getCountry()+"</Country>\n";
+    			}
     			xml += "      </Bidder>\n";
     			xml += "    </Bid>\n";
     		}

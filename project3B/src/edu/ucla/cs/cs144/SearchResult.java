@@ -1,6 +1,6 @@
 package edu.ucla.cs.cs144;
 
-public class SearchResult implements Comparable<SearchResult> {
+public class SearchResult {
 	private String itemId;
 	private String name;
     
@@ -26,14 +26,36 @@ public class SearchResult implements Comparable<SearchResult> {
 	public void setName(String name) {
 		this.name = name;
 	}
-    
-    public int compareTo(SearchResult sr) {
-        if (Integer.parseInt(this.itemId) < Integer.parseInt(sr.itemId)) {
-            return -1;
-        } else if (this.itemId.equals(sr.itemId)) {
-            return 0;
-        } else {
-            return 1;
-        }
+
+    @Override
+    public int hashCode() {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((itemId == null) ? 0 : itemId.hashCode());
+        result = PRIME * result + ((name == null) ? 0 : name.hashCode());
+        return result;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final SearchResult other = (SearchResult) obj;
+        if (itemId == null) {
+            if (other.itemId != null)
+                return false;
+        } else if (!itemId.equals(other.itemId))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
+    }
+    
 }

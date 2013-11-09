@@ -94,11 +94,13 @@ public class AuctionSearch implements IAuctionSearch {
             Set<SearchResult> results = getAdvancedResults(constraints);
             formattedResults = formatResults(results, numResultsToSkip,
                     numResultsToReturn);
+
+            conn.close();
         } catch (SQLException e) {
             System.out.println(e);
         }
 
-        return new SearchResult[0];
+        return formattedResults;
     }
 
     public String getXMLDataForItemId(String itemId) {
@@ -201,6 +203,7 @@ public class AuctionSearch implements IAuctionSearch {
 
     private Set<SearchResult> getAdvancedResults(SearchConstraint[] constraints)
             throws SQLException {
+
         boolean needsJoin = false;
         for (SearchConstraint constraint : constraints) {
             if (constraint.getFieldName().equals(FieldName.BidderId)) {
@@ -248,12 +251,14 @@ public class AuctionSearch implements IAuctionSearch {
                 Set<SearchResult> sqlResults = extractSqlResults(sqlQuery);
                 return sqlResults;
             } else if (luceneQuery != null && sqlQuery == null) {
-                
+                Hits hits = performSearch(luceneQuery);
+                results = extractLuceneResults(hits);
+            } else {
+                Hits hits = performSearch(luceneQuery);
+                results = extractLuceneResults(hits);
+                Set<SearchResult> sqlResults = extractSqlResults(sqlQuery);
+                results.retainAll(sqlResults);
             }
-            Hits hits = performSearch(luceneQuery);
-            results = extractLuceneResults(hits);
-            Set<SearchResult> sqlResults = extractSqlResults(sqlQuery);
-            results.retainAll(sqlResults);
         } catch (ParseException e) {
             System.out.println(e);
         } catch (IOException e) {
@@ -281,7 +286,7 @@ public class AuctionSearch implements IAuctionSearch {
 
     private Set<SearchResult> extractLuceneResults(Hits hits)
             throws IOException {
-        
+
         int size = 0;
         if (hits != null) {
             size = hits.length();
@@ -298,12 +303,12 @@ public class AuctionSearch implements IAuctionSearch {
             boolean needsJoin) {
         if (query == null && needsJoin) {
             query = "SELECT ItemID, Name FROM Item JOIN Bid on Item.ItemID = Bid.ItemID"
-                    + " WHERE " + column + "=" + value;
+                    + " WHERE " + column + "='" + value + "'";
         } else if (query == null && !needsJoin) {
-            query = "SELECT ItemID, Name FROM Item WHERE " + column + "="
-                    + value;
+            query = "SELECT ItemID, Name FROM Item WHERE " + column + "='"
+                    + value + "'";
         } else {
-            query = query + " AND " + column + "=" + value;
+            query = query + " AND " + column + "='" + value + "'";
         }
         return query;
     }
@@ -340,6 +345,11 @@ public class AuctionSearch implements IAuctionSearch {
             size = numToReturn;
             endCondition = numToReturn + numToSkip;
         }
+        if (size < 0) {
+            size = 0;
+            endCondition = 0;
+        }
+
         SearchResult[] arrayResults = results.toArray(new SearchResult[results
                 .size()]);
         SearchResult[] formatedResults = new SearchResult[size];
@@ -363,6 +373,11 @@ public class AuctionSearch implements IAuctionSearch {
             size = numToReturn;
             endCondition = numToReturn + numToSkip;
         }
+        if (size < 0) {
+            size = 0;
+            endCondition = 0;
+        }
+
         SearchResult[] results = new SearchResult[size];
 
         for (int i = numToSkip; i < endCondition; i++) {

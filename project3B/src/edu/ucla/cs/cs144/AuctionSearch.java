@@ -140,8 +140,7 @@ public class AuctionSearch implements IAuctionSearch {
             getItemData.setInt(1, ItemId);
             ResultSet itemResultSet = getItemData.executeQuery();
             if(!itemResultSet.next()) {
-            	System.err.println("Invalid Item ID in constructItemFromDB.");
-            	System.exit(1);
+            	return null;
             }
             myItem.setName(itemResultSet.getString(1));
             myItem.setCurrently(itemResultSet.getFloat(2));
@@ -184,8 +183,7 @@ public class AuctionSearch implements IAuctionSearch {
             ResultSet sellerResultSet = getSellerData.executeQuery();
             
             if(!sellerResultSet.next()){
-            	System.err.println("No Seller Found for Item in getXMLDataForItemID. Invalid Data");
-            	System.exit(1);
+            	throw new SQLException("Item is required to have Seller.");
             }
             mySeller.setUserID(sellerResultSet.getString(1));
             mySeller.setRating(sellerResultSet.getInt(2));

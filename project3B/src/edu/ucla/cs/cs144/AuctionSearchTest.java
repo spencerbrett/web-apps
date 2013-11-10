@@ -17,19 +17,25 @@ public class AuctionSearchTest {
         System.out.println("Reply: " + reply);
 
         String query = "superman";
-        SearchResult[] basicResults = as.basicSearch(query, 0, 20);
+        SearchResult[] basicResults = as.basicSearch(query, 0, 1);
         System.out.println("Basic Seacrh Query: " + query);
         System.out.println("Received " + basicResults.length + " results");
         for (SearchResult result : basicResults) {
             System.out.println(result.getItemId() + ": " + result.getName());
         }
 
-        SearchConstraint constraint = new SearchConstraint(FieldName.ItemName,
-                "pan");
-        SearchConstraint constraint2 = new SearchConstraint(FieldName.Category,
-                "kitchenware");
-        SearchConstraint[] constraints = { constraint, constraint2 };
-        SearchResult[] advancedResults = as.advancedSearch(constraints, 18, 20);
+        SearchConstraint constraint = new SearchConstraint(FieldName.EndTime,
+                "2001-12-14 21:00:05");
+        SearchConstraint constraint2 = new SearchConstraint(FieldName.SellerId,
+                "waltera317a");
+        SearchConstraint constraint3= new SearchConstraint(FieldName.SellerId,
+        "blah");
+        SearchConstraint constraint4 = new SearchConstraint(FieldName.BidderId,
+        "nobody138");
+        SearchConstraint constraint5 = new SearchConstraint(FieldName.BidderId,
+        "danielhb2000");
+        SearchConstraint[] constraints = { constraint };
+        SearchResult[] advancedResults = as.advancedSearch(constraints, 0, 20);
         System.out.println("Advanced Seacrh");
         System.out.println("Received " + advancedResults.length + " results");
         for (SearchResult result : advancedResults) {

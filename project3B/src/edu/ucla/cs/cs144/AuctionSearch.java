@@ -23,6 +23,7 @@ import org.apache.lucene.search.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import edu.ucla.cs.cs144.DbManager;
@@ -70,6 +71,10 @@ public class AuctionSearch implements IAuctionSearch {
     public SearchResult[] basicSearch(String query, int numResultsToSkip,
             int numResultsToReturn) {
 
+        if (numResultsToReturn < 0 || numResultsToSkip < 0) {
+            return new SearchResult[0];
+        }
+
         init();
         SearchResult[] results = null;
         try {
@@ -86,6 +91,10 @@ public class AuctionSearch implements IAuctionSearch {
 
     public SearchResult[] advancedSearch(SearchConstraint[] constraints,
             int numResultsToSkip, int numResultsToReturn) {
+
+        if (numResultsToReturn < 0 || numResultsToSkip < 0) {
+            return new SearchResult[0];
+        }
 
         init();
         SearchResult[] formattedResults = null;
@@ -104,44 +113,44 @@ public class AuctionSearch implements IAuctionSearch {
     }
 
     public String getXMLDataForItemId(String itemId) {
-    	// Cast ItemID as an Integer
-    	int ItemId = Integer.parseInt(itemId);
-    	
-    	// Build Item object from DB tables using ItemId
-    	Item myItem = constructItemFromDB(ItemId);
-    	
-    	// Construct XML as String using Item data and following Item Schema
-    	String xmlData = myItem.generateXML();
-        
+        // Cast ItemID as an Integer
+        int ItemId = Integer.parseInt(itemId);
+
+        // Build Item object from DB tables using ItemId
+        Item myItem = constructItemFromDB(ItemId);
+
+        // Construct XML as String using Item data and following Item Schema
+        String xmlData = myItem.generateXML();
+
         return xmlData;
     }
-    public Item constructItemFromDB(int ItemId) {
-    	Item myItem = new Item();
-    	try {
-            conn = DbManager.getConnection(true);
-            PreparedStatement getItemData = conn.prepareStatement(
-            		"SELECT Name, Currently, First_Bid, Number_of_Bids, Started, Ends, SellerID, Description " +
-            	    "FROM Item WHERE ItemID = ?");
-            PreparedStatement getItemCategories = conn.prepareStatement(
-            		"SELECT Category FROM Category WHERE ItemID = ?");
-            PreparedStatement getSellerData = conn.prepareStatement(
-            		"SELECT * FROM User WHERE UserID = ?");
-            PreparedStatement getItemBids = conn.prepareStatement(
-            		"SELECT u.UserID, u.Rating, u.Location, u.Country, b.Time, b.Amount "
-                  + "FROM User AS u "
-                  + "INNER JOIN Bid AS b "
-                  + "ON u.UserID = b.UserID " + "WHERE b.ItemID = ?");
 
+    public Item constructItemFromDB(int ItemId) {
+        Item myItem = new Item();
+        try {
+            conn = DbManager.getConnection(true);
+            PreparedStatement getItemData = conn
+                    .prepareStatement("SELECT Name, Currently, First_Bid, Number_of_Bids, Started, Ends, SellerID, Description "
+                            + "FROM Item WHERE ItemID = ?");
+            PreparedStatement getItemCategories = conn
+                    .prepareStatement("SELECT Category FROM Category WHERE ItemID = ?");
+            PreparedStatement getSellerData = conn
+                    .prepareStatement("SELECT * FROM User WHERE UserID = ?");
+            PreparedStatement getItemBids = conn
+                    .prepareStatement("SELECT u.UserID, u.Rating, u.Location, u.Country, b.Time, b.Amount "
+                            + "FROM User AS u "
+                            + "INNER JOIN Bid AS b "
+                            + "ON u.UserID = b.UserID " + "WHERE b.ItemID = ?");
 
             // set up variables for getting item data
             myItem.setItemID(ItemId);
-            
+
             // Get Item data and load it into prepared variables
             getItemData.setInt(1, ItemId);
             ResultSet itemResultSet = getItemData.executeQuery();
-            if(!itemResultSet.next()) {
-            	System.err.println("Invalid Item ID in constructItemFromDB.");
-            	System.exit(1);
+            if (!itemResultSet.next()) {
+                System.err.println("Invalid Item ID in constructItemFromDB.");
+                System.exit(1);
             }
             myItem.setName(itemResultSet.getString(1));
             myItem.setCurrently(itemResultSet.getFloat(2));
@@ -154,12 +163,12 @@ public class AuctionSearch implements IAuctionSearch {
             // Get Categories and load them into Categories List
             getItemCategories.setInt(1, ItemId);
             ResultSet catResultSet = getItemCategories.executeQuery();
-            
+
             while (catResultSet.next()) {
-            	String cat = catResultSet.getString(1);
+                String cat = catResultSet.getString(1);
                 myItem.addToCatList(cat);
             }
-            
+
             // Get Bids and load them into Bid List
             getItemBids.setInt(1, ItemId);
             ResultSet bidResultSet = getItemBids.executeQuery();
@@ -174,18 +183,19 @@ public class AuctionSearch implements IAuctionSearch {
                 myBid.setTime(bidResultSet.getDate(5));
                 myBid.setAmount(bidResultSet.getFloat(6));
                 myItem.addToBidList(myBid);
-
             }
+
             // Set up variables for getting Seller Data
             User mySeller = new User();
 
             // Get Seller data and load it into prepared variables
             getSellerData.setString(1, itemResultSet.getString(7));
             ResultSet sellerResultSet = getSellerData.executeQuery();
-            
-            if(!sellerResultSet.next()){
-            	System.err.println("No Seller Found for Item in getXMLDataForItemID. Invalid Data");
-            	System.exit(1);
+
+            if (!sellerResultSet.next()) {
+                System.err
+                        .println("No Seller Found for Item in getXMLDataForItemID. Invalid Data");
+                System.exit(1);
             }
             mySeller.setUserID(sellerResultSet.getString(1));
             mySeller.setRating(sellerResultSet.getInt(2));
@@ -197,6 +207,7 @@ public class AuctionSearch implements IAuctionSearch {
         }
         return myItem;
     }
+
     public String echo(String message) {
         return message;
     }
@@ -204,16 +215,31 @@ public class AuctionSearch implements IAuctionSearch {
     private Set<SearchResult> getAdvancedResults(SearchConstraint[] constraints)
             throws SQLException {
 
-        boolean needsJoin = false;
+        int numBidders = 0;
+        int numNonBidders = 0;
+        List<SearchConstraint> bidders = new ArrayList<SearchConstraint>();
         for (SearchConstraint constraint : constraints) {
             if (constraint.getFieldName().equals(FieldName.BidderId)) {
-                needsJoin = true;
+                numBidders++;
+                bidders.add(constraint);
+            } else if (constraint.getFieldName().equals(FieldName.BuyPrice)
+                    || constraint.getFieldName().equals(FieldName.EndTime)
+                    || constraint.getFieldName().equals(FieldName.SellerId)) {
+                numNonBidders++;
             }
         }
 
+        boolean needsJoin = false;
+        if (numBidders > 0)
+            needsJoin = true;
+
         String luceneQuery = null;
         String sqlQuery = null;
+        if (numNonBidders + numBidders > 0) {
+            sqlQuery = constructSqlQuery(null, null, null, needsJoin);
+        }
 
+        int sqlConstraints = 0;
         for (SearchConstraint constraint : constraints) {
             if (constraint.getFieldName().equals(FieldName.ItemName)) {
                 luceneQuery = constructLuceneQuery(luceneQuery, "name",
@@ -225,18 +251,52 @@ public class AuctionSearch implements IAuctionSearch {
                 luceneQuery = constructLuceneQuery(luceneQuery, "description",
                         constraint.getValue());
             } else if (constraint.getFieldName().equals(FieldName.SellerId)) {
-                sqlQuery = constructSqlQuery(sqlQuery, "Item.SellerID",
-                        constraint.getValue(), needsJoin);
+                sqlQuery = constructSqlQuery(sqlQuery, "Item.SellerID", "'"
+                        + constraint.getValue() + "'", needsJoin);
+                if (sqlConstraints > 0) {
+                    sqlQuery = sqlQuery + " AND ";
+                }
+                sqlConstraints++;
             } else if (constraint.getFieldName().equals(FieldName.BuyPrice)) {
-                sqlQuery = constructSqlQuery(sqlQuery, "Item.Buy_price",
-                        constraint.getValue(), needsJoin);
+                sqlQuery = constructSqlQuery(sqlQuery, "Item.Buy_price", "'"
+                        + constraint.getValue() + "'", needsJoin);
+                if (sqlConstraints > 0) {
+                    sqlQuery = sqlQuery + " AND ";
+                }
+                sqlConstraints++;
             } else if (constraint.getFieldName().equals(FieldName.EndTime)) {
-                sqlQuery = constructSqlQuery(sqlQuery, "Item.Ends", constraint
-                        .getValue(), needsJoin);
-            } else if (constraint.getFieldName().equals(FieldName.BidderId)) {
-                sqlQuery = constructSqlQuery(sqlQuery, "Bid.UserID", constraint
-                        .getValue(), needsJoin);
+                //Date queryDate = DateFormat.parse(constraint.getValue());
+                sqlQuery = constructSqlQuery(sqlQuery, "Item.Ends", "'"
+                        + constraint.getValue() + "'", needsJoin);
+                if (sqlConstraints > 0) {
+                    sqlQuery = sqlQuery + " AND ";
+                }
+                sqlConstraints++;
+            } else if (constraint.getFieldName().equals(FieldName.BidderId)
+                    && numBidders < 2) {
+                sqlQuery = constructSqlQuery(sqlQuery, "Bid.UserID", "'"
+                        + constraint.getValue() + "'", needsJoin);
+                if (sqlConstraints > 0) {
+                    sqlQuery = sqlQuery + " AND ";
+                }
+                sqlConstraints++;
             }
+        }
+
+        if (numBidders > 1) {
+            if (numNonBidders != 0) {
+                sqlQuery = sqlQuery + " AND (";
+            } else {
+                sqlQuery = sqlQuery + "(";
+            }
+            for (int i = 0; i < bidders.size(); i++) {
+                sqlQuery = sqlQuery + "Bid.UserID='"
+                        + bidders.get(i).getValue() + "'";
+                if (i != bidders.size() - 1) {
+                    sqlQuery = sqlQuery + " OR ";
+                }
+            }
+            sqlQuery = sqlQuery + ") GROUP BY Item.ItemID HAVING COUNT(*)>1";
         }
 
         return performAdvancedSearch(luceneQuery, sqlQuery);
@@ -245,6 +305,7 @@ public class AuctionSearch implements IAuctionSearch {
     private Set<SearchResult> performAdvancedSearch(String luceneQuery,
             String sqlQuery) throws SQLException {
 
+        System.out.println(sqlQuery);
         Set<SearchResult> results = null;
         try {
             if (luceneQuery == null && sqlQuery != null) {
@@ -302,13 +363,12 @@ public class AuctionSearch implements IAuctionSearch {
     private String constructSqlQuery(String query, String column, String value,
             boolean needsJoin) {
         if (query == null && needsJoin) {
-            query = "SELECT ItemID, Name FROM Item JOIN Bid on Item.ItemID = Bid.ItemID"
-                    + " WHERE " + column + "='" + value + "'";
+            query = "SELECT Item.ItemID, Name FROM Item JOIN Bid ON Item.ItemID = Bid.ItemID"
+                    + " WHERE ";
         } else if (query == null && !needsJoin) {
-            query = "SELECT ItemID, Name FROM Item WHERE " + column + "='"
-                    + value + "'";
+            query = "SELECT ItemID, Name FROM Item WHERE ";
         } else {
-            query = query + " AND " + column + "='" + value + "'";
+            query = query + column + "=" + value;
         }
         return query;
     }

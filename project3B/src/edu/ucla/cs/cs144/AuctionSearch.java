@@ -8,22 +8,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.lucene.LucenePackage;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import edu.ucla.cs.cs144.DbManager;

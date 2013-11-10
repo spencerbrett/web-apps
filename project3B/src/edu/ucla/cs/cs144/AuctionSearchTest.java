@@ -25,7 +25,7 @@ public class AuctionSearchTest {
         }
 
         SearchConstraint constraint = new SearchConstraint(FieldName.ItemName,
-                "description:no");
+                "Precious Moments");
         SearchConstraint constraint2 = new SearchConstraint(FieldName.SellerId,
                 "waltera317a");
         SearchConstraint constraint3= new SearchConstraint(FieldName.SellerId,

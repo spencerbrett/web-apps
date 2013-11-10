@@ -208,6 +208,9 @@ public class AuctionSearch implements IAuctionSearch {
 
         int numBidders = 0;
         int numNonBidders = 0;
+        
+        // Check for Bidder constraints and SQL contraints.
+        // Extract the Bidder constraints.
         List<SearchConstraint> bidders = new ArrayList<SearchConstraint>();
         for (SearchConstraint constraint : constraints) {
             if (constraint.getFieldName().equals(FieldName.BidderId)) {
@@ -220,16 +223,19 @@ public class AuctionSearch implements IAuctionSearch {
             }
         }
 
+        // If we have Bidder constraints we need a join in the DB.
         boolean needsJoin = false;
         if (numBidders > 0)
             needsJoin = true;
 
+        // Initialize query strings.
         String luceneQuery = null;
         String sqlQuery = null;
         if (numNonBidders + numBidders > 0) {
             sqlQuery = constructSqlQuery(null, null, null, needsJoin);
         }
 
+        // Loop through constraints and build up the queries.
         int sqlConstraints = 0;
         for (SearchConstraint constraint : constraints) {
             if (constraint.getFieldName().equals(FieldName.ItemName)) {
@@ -256,6 +262,7 @@ public class AuctionSearch implements IAuctionSearch {
                 }
                 sqlConstraints++;
             } else if (constraint.getFieldName().equals(FieldName.EndTime)) {
+                // Make sure end time is formatted correctly.
                 SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
                 Date queryDate = null;
                 try {
@@ -282,6 +289,7 @@ public class AuctionSearch implements IAuctionSearch {
             }
         }
 
+        // If we have multiple Bidder constraints we need to format a special query.
         if (numBidders > 1) {
             if (numNonBidders != 0) {
                 sqlQuery = sqlQuery + " AND (";
@@ -304,8 +312,6 @@ public class AuctionSearch implements IAuctionSearch {
     private Set<SearchResult> performAdvancedSearch(String luceneQuery,
             String sqlQuery) throws SQLException {
 
-        System.out.println(luceneQuery);
-        System.out.println(sqlQuery);
         Set<SearchResult> results = null;
         try {
             if (luceneQuery == null && sqlQuery != null) {

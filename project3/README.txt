@@ -6,6 +6,8 @@ Partner 2:
 Daniel Daskalov
 504079134
 
+NOTE: We are resubmitting Part A because we had left a wrong query there
+that we used for testing.
 
 This example contains a simple utility class to simplify opening database
 connections in Java applications, such as the one you will write to build

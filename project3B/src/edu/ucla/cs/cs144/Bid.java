@@ -1,13 +1,14 @@
 package edu.ucla.cs.cs144;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Bid {
 	private User Bidder;
-	private Date Time;
+	private String Time;
 	private float Amount;
 	
-	public Bid(User bidder, Date time, float amount) {
+	public Bid(User bidder, String time, float amount) {
 		super();
 		Bidder = bidder;
 		Time = time;
@@ -35,12 +36,21 @@ public class Bid {
 		Bidder = bidder;
 	}
 
-	public Date getTime() {
+	public String getTime() {
 		return Time;
 	}
 
-	public void setTime(Date time) {
-		Time = time;
+	public void setTime(String time) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+        Date timeDate = null;
+        try {
+            timeDate = sdf.parse(time);
+        } catch (java.text.ParseException e) {
+            System.err.println(e);
+        }
+		SimpleDateFormat newDateFormat = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+        String formattedTime = newDateFormat.format(timeDate);
+		Time = formattedTime;
 	}
 	
 }

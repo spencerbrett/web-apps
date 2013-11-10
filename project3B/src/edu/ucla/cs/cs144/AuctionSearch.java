@@ -150,8 +150,8 @@ public class AuctionSearch implements IAuctionSearch {
             myItem.setCurrently(itemResultSet.getFloat(2));
             myItem.setFirst_Bid(itemResultSet.getFloat(3));
             myItem.setNumber_of_Bids(itemResultSet.getInt(4));
-            myItem.setStarted(itemResultSet.getDate(5));
-            myItem.setEnds(itemResultSet.getDate(6));
+            myItem.setStarted(itemResultSet.getString(5));
+            myItem.setEnds(itemResultSet.getString(6));
             myItem.setDescription(itemResultSet.getString(8));
 
             // Get Categories and load them into Categories List
@@ -174,7 +174,7 @@ public class AuctionSearch implements IAuctionSearch {
                 myBidder.setLocation(bidResultSet.getString(3));
                 myBidder.setCountry(bidResultSet.getString(4));
                 myBid.setBidder(myBidder);
-                myBid.setTime(bidResultSet.getDate(5));
+                myBid.setTime(bidResultSet.getString(5));
                 myBid.setAmount(bidResultSet.getFloat(6));
                 myItem.addToBidList(myBid);
             }
@@ -193,6 +193,7 @@ public class AuctionSearch implements IAuctionSearch {
             mySeller.setLocation(sellerResultSet.getString(3));
             mySeller.setCountry(sellerResultSet.getString(4));
             myItem.setSeller(mySeller);
+            conn.close();
         } catch (SQLException ex) {
             System.err.println(ex);
         }

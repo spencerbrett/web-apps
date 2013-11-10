@@ -2,6 +2,8 @@ package edu.ucla.cs.cs144;
 
 
 import org.apache.commons.lang.StringEscapeUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +12,7 @@ public class Item {
 	private int ItemID;
 	private int Number_of_Bids;
     private float Currently, First_Bid;
-    private Date Started, Ends;
+    private String Started, Ends;
     private String Name, Description, SellerID;
     private List<String> CategoryList;
     private List<Bid> Bids;
@@ -45,7 +47,8 @@ public class Item {
     				xml += "        <Country>"+StringEscapeUtils.escapeXml(b.getBidder().getCountry())+"</Country>\n";
     			}
     			xml += "      </Bidder>\n";
-    			xml += "      <Time>"+b.getTime().toString();
+    			xml += "      <Time>"+b.getTime()+"</Time>\n";
+    			xml += "      <Amount>"+b.getAmount()+"</Amount>\n";
     			xml += "    </Bid>\n";
     		}
     		xml += "  </Bids>\n";
@@ -53,8 +56,8 @@ public class Item {
     	xml += "  <Location>"+StringEscapeUtils.escapeXml(seller.getLocation())+"</Location>\n";
     	xml += "  <Country>"+StringEscapeUtils.escapeXml(seller.getCountry())+"</Country>\n";
     	// Check to make sure this date is formatted correctly
-    	xml += "  <Started>"+Started.toString()+"</Started>\n";
-    	xml += "  <Ends>"+Ends.toString()+"</Ends>\n";
+    	xml += "  <Started>"+Started+"</Started>\n";
+    	xml += "  <Ends>"+Ends+"</Ends>\n";
     	xml += "  <Seller UserID=\""+StringEscapeUtils.escapeXml(seller.getUserID())+"\" Rating=\""+seller.getRating()+"\"/>\n";
     	xml += "  <Description>"+StringEscapeUtils.escapeXml(Description)+"</Description>\n";
     	xml += "</Item>\n";
@@ -96,11 +99,20 @@ public class Item {
 	public void setDescription(String description) {
 		Description = description;
 	}
-	public Date getEnds() {
+	public String getEnds() {
 		return Ends;
 	}
-	public void setEnds(Date ends) {
-		Ends = ends;
+	public void setEnds(String ends) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+        Date endsDate = null;
+        try {
+            endsDate = sdf.parse(ends);
+        } catch (java.text.ParseException e) {
+            System.err.println(e);
+        }
+		SimpleDateFormat newDateFormat = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+        String formattedEnds = newDateFormat.format(endsDate);
+		Ends = formattedEnds;
 	}
 	public float getFirst_Bid() {
 		return First_Bid;
@@ -132,11 +144,20 @@ public class Item {
 	public void setSellerID(String sellerID) {
 		SellerID = sellerID;
 	}
-	public Date getStarted() {
+	public String getStarted() {
 		return Started;
 	}
-	public void setStarted(Date started) {
-		Started = started;
+	public void setStarted(String started) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+        Date startedDate = null;
+        try {
+            startedDate = sdf.parse(started);
+        } catch (java.text.ParseException e) {
+            System.err.println(e);
+        }
+		SimpleDateFormat newDateFormat = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+        String formattedStarted = newDateFormat.format(startedDate);
+		Started = formattedStarted;
 	}
     
     

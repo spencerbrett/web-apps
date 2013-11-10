@@ -148,8 +148,8 @@ public class AuctionSearch implements IAuctionSearch {
             // Get Item data and load it into prepared variables
             getItemData.setInt(1, ItemId);
             ResultSet itemResultSet = getItemData.executeQuery();
-            if(!itemResultSet.next()) {
-            	return null;
+            if (!itemResultSet.next()) {
+                return null;
             }
             myItem.setName(itemResultSet.getString(1));
             myItem.setCurrently(itemResultSet.getFloat(2));
@@ -190,8 +190,8 @@ public class AuctionSearch implements IAuctionSearch {
             // Get Seller data and load it into prepared variables
             getSellerData.setString(1, itemResultSet.getString(7));
             ResultSet sellerResultSet = getSellerData.executeQuery();
-            if(!sellerResultSet.next()){
-            	throw new SQLException("Item is required to have Seller.");
+            if (!sellerResultSet.next()) {
+                throw new SQLException("Item is required to have Seller.");
             }
             mySeller.setUserID(sellerResultSet.getString(1));
             mySeller.setRating(sellerResultSet.getInt(2));
@@ -239,16 +239,16 @@ public class AuctionSearch implements IAuctionSearch {
         for (SearchConstraint constraint : constraints) {
             if (constraint.getFieldName().equals(FieldName.ItemName)) {
                 luceneQuery = constructLuceneQuery(luceneQuery, "name",
-                        constraint.getValue());
+                        formatLuceneQueryString(constraint.getValue()));
             } else if (constraint.getFieldName().equals(FieldName.Category)) {
                 luceneQuery = constructLuceneQuery(luceneQuery, "categories",
-                        constraint.getValue());
+                        formatLuceneQueryString(constraint.getValue()));
             } else if (constraint.getFieldName().equals(FieldName.Description)) {
                 luceneQuery = constructLuceneQuery(luceneQuery, "description",
-                        constraint.getValue());
+                        formatLuceneQueryString(constraint.getValue()));
             } else if (constraint.getFieldName().equals(FieldName.SellerId)) {
                 sqlQuery = constructSqlQuery(sqlQuery, "Item.SellerID", "'"
-                        + constraint.getValue() + "'", needsJoin);
+                        + constraint.getValue().replace("\'", "\\\'") + "'", needsJoin);
                 if (sqlConstraints > 0) {
                     sqlQuery = sqlQuery + " AND ";
                 }
@@ -261,9 +261,17 @@ public class AuctionSearch implements IAuctionSearch {
                 }
                 sqlConstraints++;
             } else if (constraint.getFieldName().equals(FieldName.EndTime)) {
-                //Date queryDate = DateFormat.parse(constraint.getValue());
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+                Date queryDate = null;
+                try {
+                    queryDate = sdf.parse(constraint.getValue());
+                } catch (java.text.ParseException e) {
+                    System.out.println(e);
+                }
+                SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String formattedDate = newDateFormat.format(queryDate);
                 sqlQuery = constructSqlQuery(sqlQuery, "Item.Ends", "'"
-                        + constraint.getValue() + "'", needsJoin);
+                        + formattedDate + "'", needsJoin);
                 if (sqlConstraints > 0) {
                     sqlQuery = sqlQuery + " AND ";
                 }
@@ -271,7 +279,7 @@ public class AuctionSearch implements IAuctionSearch {
             } else if (constraint.getFieldName().equals(FieldName.BidderId)
                     && numBidders < 2) {
                 sqlQuery = constructSqlQuery(sqlQuery, "Bid.UserID", "'"
-                        + constraint.getValue() + "'", needsJoin);
+                        + constraint.getValue().replace("\'", "\\\'") + "'", needsJoin);
                 if (sqlConstraints > 0) {
                     sqlQuery = sqlQuery + " AND ";
                 }
@@ -301,6 +309,7 @@ public class AuctionSearch implements IAuctionSearch {
     private Set<SearchResult> performAdvancedSearch(String luceneQuery,
             String sqlQuery) throws SQLException {
 
+        System.out.println(luceneQuery);
         System.out.println(sqlQuery);
         Set<SearchResult> results = null;
         try {
@@ -354,6 +363,12 @@ public class AuctionSearch implements IAuctionSearch {
             luceneResults.add(new SearchResult(doc.get("id"), doc.get("name")));
         }
         return luceneResults;
+    }
+    
+    private String formatLuceneQueryString(String value) {
+        String formattedValue = QueryParser.escape(value);
+        formattedValue = "(" + formattedValue.replace(" ", " AND ") + ")";
+        return formattedValue;
     }
 
     private String constructSqlQuery(String query, String column, String value,

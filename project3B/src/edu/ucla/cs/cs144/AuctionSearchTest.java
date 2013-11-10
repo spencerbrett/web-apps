@@ -24,8 +24,8 @@ public class AuctionSearchTest {
             System.out.println(result.getItemId() + ": " + result.getName());
         }
 
-        SearchConstraint constraint = new SearchConstraint(FieldName.EndTime,
-                "2001-12-14 21:00:05");
+        SearchConstraint constraint = new SearchConstraint(FieldName.ItemName,
+                "description:no");
         SearchConstraint constraint2 = new SearchConstraint(FieldName.SellerId,
                 "waltera317a");
         SearchConstraint constraint3= new SearchConstraint(FieldName.SellerId,

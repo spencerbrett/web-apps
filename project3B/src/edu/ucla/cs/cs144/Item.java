@@ -1,5 +1,7 @@
 package edu.ucla.cs.cs144;
 
+
+import org.apache.commons.lang.StringEscapeUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,9 +23,9 @@ public class Item {
     public String generateXML(){
     	String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     	xml += "<Item ItemID=\""+ItemID+"\">\n";
-    	xml += "  <Name>"+Name+"</Name>\n";
+    	xml += "  <Name>"+StringEscapeUtils.escapeXml(Name)+"</Name>\n";
     	for(String cat : CategoryList){
-    		xml += "  <Category>"+cat+"</Category>\n";
+    		xml += "  <Category>"+StringEscapeUtils.escapeXml(cat)+"</Category>\n";
     	}
     	xml += "  <Currently>$"+String.format("%.2f",Currently)+"</Currently>\n";
     	xml += "  <First_Bid>$"+String.format("%.2f",First_Bid)+"</First_Bid>\n";
@@ -37,23 +39,24 @@ public class Item {
     			xml += "    <Bid>\n";
     			xml += "      <Bidder UserID=\""+b.getBidder().getUserID()+"\" Rating=\""+b.getBidder().getRating()+"\">\n";
     			if(b.getBidder().getLocation() != null){
-    				xml += "        <Location>"+b.getBidder().getLocation()+"</Location>\n";
+    				xml += "        <Location>"+StringEscapeUtils.escapeXml(b.getBidder().getLocation())+"</Location>\n";
     			}
     			if(b.getBidder().getCountry() != null){
-    				xml += "        <Country>"+b.getBidder().getCountry()+"</Country>\n";
+    				xml += "        <Country>"+StringEscapeUtils.escapeXml(b.getBidder().getCountry())+"</Country>\n";
     			}
     			xml += "      </Bidder>\n";
+    			xml += "      <Time>"+b.getTime().toString();
     			xml += "    </Bid>\n";
     		}
     		xml += "  </Bids>\n";
     	}
-    	xml += "  <Location>"+seller.getLocation()+"</Location>\n";
-    	xml += "  <Country>"+seller.getCountry()+"</Country>\n";
+    	xml += "  <Location>"+StringEscapeUtils.escapeXml(seller.getLocation())+"</Location>\n";
+    	xml += "  <Country>"+StringEscapeUtils.escapeXml(seller.getCountry())+"</Country>\n";
     	// Check to make sure this date is formatted correctly
     	xml += "  <Started>"+Started.toString()+"</Started>\n";
     	xml += "  <Ends>"+Ends.toString()+"</Ends>\n";
-    	xml += "  <Seller UserID=\""+seller.getUserID()+"\" Rating=\""+seller.getRating()+"\"/>\n";
-    	xml += "  <Description>"+Description+"</Description>\n";
+    	xml += "  <Seller UserID=\""+StringEscapeUtils.escapeXml(seller.getUserID())+"\" Rating=\""+seller.getRating()+"\"/>\n";
+    	xml += "  <Description>"+StringEscapeUtils.escapeXml(Description)+"</Description>\n";
     	xml += "</Item>\n";
     	return xml;
     }

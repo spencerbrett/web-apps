@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -57,7 +59,7 @@ public class Item {
             this.seller = new User();
             this.seller.setLocation(MyParser.getElementTextByTagNameNR(domItem, "Location"));
             this.seller.setCountry(MyParser.getElementTextByTagNameNR(domItem, "Country"));
-            this.seller.setUserID(MyParser.getElementByTagNameNR(domItem, "Seller").getAttributeNode("UserID").getNodeValue());
+            this.seller.setUserId(MyParser.getElementByTagNameNR(domItem, "Seller").getAttributeNode("UserID").getNodeValue());
             this.seller.setRating(Integer.parseInt(MyParser.getElementByTagNameNR(domItem,"Seller").getAttributeNode("Rating").getNodeValue()));
 
             this.Started = MyParser.getElementTextByTagNameNR(domItem,"Started");
@@ -88,7 +90,7 @@ public class Item {
     }
     public User buildUser(Element e){
     	User u = new User();
-	    u.setUserID(e.getAttributeNode("UserID").getNodeValue());
+	    u.setUserId(e.getAttributeNode("UserID").getNodeValue());
 	    u.setRating(Integer.parseInt(e.getAttributeNode("Rating")
 	            .getNodeValue()));
 	    u.setLocation(MyParser.getElementTextByTagNameNR(e, "Location"));
@@ -200,5 +202,45 @@ public class Item {
 		Buy_Price = buy_Price;
 	}
     
-    
+    public String generateXML(){
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        xml += "<Item ItemID=\""+ItemID+"\">\n";
+        xml += "  <Name>"+StringEscapeUtils.escapeXml(Name)+"</Name>\n";
+        for(String cat : CategoryList){
+            xml += "  <Category>"+StringEscapeUtils.escapeXml(cat)+"</Category>\n";
+        }
+        xml += "  <Currently>$"+String.format("%.2f",Currently)+"</Currently>\n";
+        xml += "  <First_Bid>$"+String.format("%.2f",First_Bid)+"</First_Bid>\n";
+        xml += "  <Number_of_Bids>"+Number_of_Bids+"</Number_of_Bids>\n";
+        if(Bids.isEmpty()){
+            xml += "  <Bids/>\n";
+        }
+        else {
+            xml += "  <Bids>\n";
+            for(Bid b : Bids){
+                xml += "    <Bid>\n";
+                xml += "      <Bidder UserID=\""+b.getBidder().getUserId()+"\" Rating=\""+b.getBidder().getRating()+"\">\n";
+                if(b.getBidder().getLocation() != null){
+                    xml += "        <Location>"+StringEscapeUtils.escapeXml(b.getBidder().getLocation())+"</Location>\n";
+                }
+                if(b.getBidder().getCountry() != null){
+                    xml += "        <Country>"+StringEscapeUtils.escapeXml(b.getBidder().getCountry())+"</Country>\n";
+                }
+                xml += "      </Bidder>\n";
+                xml += "      <Time>"+b.getTime()+"</Time>\n";
+                xml += "      <Amount>"+b.getAmount()+"</Amount>\n";
+                xml += "    </Bid>\n";
+            }
+            xml += "  </Bids>\n";
+        }
+        xml += "  <Location>"+StringEscapeUtils.escapeXml(seller.getLocation())+"</Location>\n";
+        xml += "  <Country>"+StringEscapeUtils.escapeXml(seller.getCountry())+"</Country>\n";
+        // Check to make sure this date is formatted correctly
+        xml += "  <Started>"+Started+"</Started>\n";
+        xml += "  <Ends>"+Ends+"</Ends>\n";
+        xml += "  <Seller UserID=\""+StringEscapeUtils.escapeXml(seller.getUserId())+"\" Rating=\""+seller.getRating()+"\"/>\n";
+        xml += "  <Description>"+StringEscapeUtils.escapeXml(Description)+"</Description>\n";
+        xml += "</Item>\n";
+        return xml;
+    }
 }

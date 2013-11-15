@@ -12,7 +12,7 @@
 </form>
 <% Item item = (Item) request.getAttribute("itemData"); %>
 <h2>Item data:</h2>
-Item ID: <%= item.getItemId() %>
+Item ID: <%= item.getItemID() %>
 </body>
 
 </html>

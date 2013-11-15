@@ -1,14 +1,21 @@
 package edu.ucla.cs.cs144;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 public class Item {
 	private int ItemID;
 	private int Number_of_Bids;
-    private float Currently, First_Bid;
+    private float Currently, First_Bid, Buy_Price;
     private String Started, Ends;
     private String Name, Description, SellerID;
     private List<String> CategoryList;
@@ -20,6 +27,74 @@ public class Item {
         Bids = new ArrayList<Bid>();
     }
 
+    public Item(String xml){
+    	try {
+    		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    		Document doc = dBuilder.parse(xml);
+    	 
+    		//optional, but recommended
+    		//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+    		doc.getDocumentElement().normalize();
+    		Element domItem = doc.getDocumentElement();
+    		
+            this.ItemID = Integer.parseInt(domItem.getAttributeNode("ItemID").getNodeValue());
+            this.Name = MyParser.getElementTextByTagNameNR(domItem, "Name");
+            this.CategoryList = new ArrayList<String>();
+            for (Element e : MyParser.getElementsByTagNameNR(domItem, "Category")) {
+                this.CategoryList.add(MyParser.getElementText(e));
+            }
+            this.Currently = Float.parseFloat(MyParser.strip(MyParser.getElementTextByTagNameNR(domItem,"Currently")));
+            if (MyParser.getElementTextByTagNameNR(domItem, "Buy_Price") != "") {
+                this.Buy_Price = Float.parseFloat(MyParser.strip(MyParser.getElementTextByTagNameNR(domItem,"Buy_Price")));
+            }
+            this.First_Bid = Float.parseFloat(MyParser.strip(MyParser.getElementTextByTagNameNR(domItem, "First_Bid")));
+            this.Number_of_Bids = Integer.parseInt(MyParser.getElementTextByTagNameNR(domItem,"Number_of_Bids"));
+            this.Bids = new ArrayList<Bid>();
+            for (Element e : MyParser.getElementsByTagNameNR(MyParser.getElementByTagNameNR(domItem,"Bids"), "Bid")) {
+            	this.Bids.add(buildBid(e));
+            }
+            this.seller = new User();
+            this.seller.setLocation(MyParser.getElementTextByTagNameNR(domItem, "Location"));
+            this.seller.setCountry(MyParser.getElementTextByTagNameNR(domItem, "Country"));
+            this.seller.setUserID(MyParser.getElementByTagNameNR(domItem, "Seller").getAttributeNode("UserID").getNodeValue());
+            this.seller.setRating(Integer.parseInt(MyParser.getElementByTagNameNR(domItem,"Seller").getAttributeNode("Rating").getNodeValue()));
+
+            this.Started = MyParser.getElementTextByTagNameNR(domItem,"Started");
+            this.Ends = MyParser.getElementTextByTagNameNR(domItem, "Ends");
+
+            this.Description = MyParser.getElementTextByTagNameNR(domItem, "Description");
+            if (this.Description.length() > 4000) {
+                this.Description = this.Description.substring(0, 3999);
+            }
+    	} catch (Exception e) {
+    	    	e.printStackTrace();
+    	}
+    }
+    public Bid buildBid(Element e){
+	    Bid b = new Bid();
+	    Element bidder = MyParser.getElementByTagNameNR(e, "Bidder");
+	    User u = buildUser(bidder);
+	    b.setBidder(u);
+	    try {
+	        b.setTime(MyParser.sdf.parse(MyParser.getElementTextByTagNameNR(e,"Time")));
+	    } catch (ParseException exception) {
+	        exception.printStackTrace();
+	        System.err.println("ERROR: Could not parse date.");
+	        System.exit(1);
+	    }
+	    b.setAmount(Float.parseFloat(MyParser.strip(MyParser.getElementTextByTagNameNR(e,"Amount"))));
+    	return b;
+    }
+    public User buildUser(Element e){
+    	User u = new User();
+	    u.setUserID(e.getAttributeNode("UserID").getNodeValue());
+	    u.setRating(Integer.parseInt(e.getAttributeNode("Rating")
+	            .getNodeValue()));
+	    u.setLocation(MyParser.getElementTextByTagNameNR(e, "Location"));
+	    u.setCountry(MyParser.getElementTextByTagNameNR(e, "Country"));
+	    return u;
+    }
     public int getItemID() {
     	return ItemID;
     }
@@ -115,6 +190,14 @@ public class Item {
 		SimpleDateFormat newDateFormat = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
         String formattedStarted = newDateFormat.format(startedDate);
 		Started = formattedStarted;
+	}
+
+	public float getBuy_Price() {
+		return Buy_Price;
+	}
+
+	public void setBuy_Price(float buy_Price) {
+		Buy_Price = buy_Price;
 	}
     
     

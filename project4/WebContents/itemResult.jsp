@@ -1,3 +1,4 @@
+<%@ page import="edu.ucla.cs.cs144.Item" %>
 <html>
 
 <head>
@@ -9,8 +10,9 @@
         <input type="text" name="itemId">
         <input type="submit" value="Search">
 </form>
+<% Item item = (Item) request.getAttribute("itemData"); %>
 <h2>Item data:</h2>
-<%= request.getAttribute("itemData") %>
+Item ID: <%= item.getItemId() %>
 </body>
 
 </html>

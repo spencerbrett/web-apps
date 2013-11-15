@@ -1,6 +1,7 @@
 package edu.ucla.cs.cs144;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.naming.ConfigurationException;
 import javax.servlet.Servlet;
@@ -23,28 +24,19 @@ public class ItemServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        
         String itemId = request.getParameter("itemId");
 
         String itemData = AuctionSearchClient.getXMLDataForItemId(itemId);
+        
+        Item myItem = new Item();
+        myItem.parseXML(itemData);
+        
+        out.println(myItem.temp);
 
-//        try {
-//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory
-//                    .newInstance();
-//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//            Document doc = dBuilder.parse(itemData);
-//            
-//            NodeList nList = doc.getElementsByTagName("Item");
-//            
-//            Item myItem = new Item();
-//            
-//        } catch (ParserConfigurationException e) {
-//            System.out.println(e);
-//        } catch (SAXException e) {
-//            System.out.println(e);
-//        }
-
-        request.setAttribute("itemData", itemData);
-        request.getRequestDispatcher("itemResult.jsp").forward(request,
-                response);
+//        request.setAttribute("itemData", myItem);
+//        request.getRequestDispatcher("itemResult.jsp").forward(request,
+//                response);
     }
 }

@@ -1,5 +1,6 @@
 package edu.ucla.cs.cs144;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -40,6 +41,11 @@ public class Bid {
 		return Time;
 	}
 
+	public void setTime(Date timeDate) {
+		SimpleDateFormat newDateFormat = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+        String formattedTime = newDateFormat.format(timeDate);
+		Time = formattedTime;
+	}
 	public void setTime(String time) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
         Date timeDate = null;

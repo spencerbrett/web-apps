@@ -65,7 +65,7 @@ public class Item {
 
             this.Description = MyParser.getElementTextByTagNameNR(domItem, "Description");
             if (this.Description.length() > 4000) {
-                this.Description = this.Description.substring(0, 3999);
+                this.Description = this.Description.substring(0, 4000);
             }
     	} catch (Exception e) {
     	    	e.printStackTrace();

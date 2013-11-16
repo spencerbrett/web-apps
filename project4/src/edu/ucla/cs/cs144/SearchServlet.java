@@ -29,6 +29,6 @@ public class SearchServlet extends HttpServlet implements Servlet {
                 searchQuery, numResultsToSkip, numResultsToReturn);
 
         request.setAttribute("searchResults", basicSearchResult);
-        request.getRequestDispatcher("searchResults.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/searchResults.jsp").forward(request, response);
     }
 }

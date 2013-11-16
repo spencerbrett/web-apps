@@ -24,19 +24,14 @@ public class ItemServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
-        
+
         String itemId = request.getParameter("itemId");
 
         String itemData = AuctionSearchClient.getXMLDataForItemId(itemId);
-        
         Item myItem = new Item(itemData);
-//        myItem.parseXML(itemData);
         
-        out.println(myItem.generateXML());
-
-//        request.setAttribute("itemData", myItem);
-//        request.getRequestDispatcher("itemResult.jsp").forward(request,
-//                response);
+        request.setAttribute("itemData", myItem);
+        request.getRequestDispatcher("/WEB-INF/itemResult.jsp").forward(request,
+                response);
     }
 }

@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -95,6 +97,10 @@ public class Item {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public void sortBids() {
+        Collections.sort(Bids);
     }
 
     private Bid buildBid(Element e) {

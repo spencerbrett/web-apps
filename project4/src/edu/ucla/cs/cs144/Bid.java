@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Bid {
+public class Bid implements Comparable {
 	private User Bidder;
 	private String Time;
 	private float Amount;
@@ -59,4 +59,24 @@ public class Bid {
 		Time = formattedTime;
 	}
 	
+    public int compareTo(Object o) {
+        Bid other = (Bid) o;
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yy HH:mm:ss");
+        Date timeDate1 = null;
+        Date timeDate2 = null;
+        try {
+            timeDate1 = sdf.parse(this.Time);
+            timeDate2 = sdf.parse(other.getTime());
+        } catch (java.text.ParseException e) {
+            System.err.println(e);
+        }
+        
+        if (timeDate1.after(timeDate2)) {
+            return -1;
+        } else if (timeDate1.equals(timeDate2)) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }

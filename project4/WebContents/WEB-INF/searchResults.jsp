@@ -15,12 +15,10 @@
     <!-- Add custom CSS here -->
     <style>
 	body {margin-top: 60px;}
-	</style>
-
+    </style>
   </head>
 
   <body>
-
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -48,15 +46,15 @@
 
       <div class="row">
         <div class="col-lg-12">
-        <form class="form-inline" role="form" action="/eBay/search" method="GET">
-	        <div class="form-group">
-	            <label class="sr-only" for="q">Query</label>
-	            <input class="form-control" type="text" id="q" name="q" placeholder="Search">
-	        </div>
-	        <input class="btn btn-default" type="submit" value="Search">
-	        <input type="hidden" name="numResultsToSkip" value="0">
-        	<input type="hidden" name="numResultsToReturn" value="20">
-        </form>
+          <form class="form-inline" role="form" action="/eBay/search" method="GET">
+	    <div class="form-group">
+	      <label class="sr-only" for="q">Query</label>
+	      <input class="form-control" type="text" id="q" name="q" placeholder="Search">
+	    </div>
+	    <input class="btn btn-default" type="submit" value="Search">
+	    <input type="hidden" name="numResultsToSkip" value="0">
+            <input type="hidden" name="numResultsToReturn" value="20">
+          </form>
         
 <% String query = request.getParameter("q");
    String numToSkip = request.getParameter("numResultsToSkip");
@@ -65,12 +63,12 @@
    Integer numResultsToReturn = new Integer(numToReturn);
    SearchResult[] results = (SearchResult[]) request.getAttribute("searchResults"); %>
         
-        <h2>Search Results for &quot;<%= query %>&quot;:</h2>
-        <div class="list-group">
+          <h2>Search Results for &quot;<%= query %>&quot;:</h2>
+          <div class="list-group">
 <% for (SearchResult result : results) { %>
-	        <a href="/eBay/item?itemId=<%= result.getItemId() %>" class="list-group-item"><%= result.getName() %></a>
+	    <a href="/eBay/item?itemId=<%= result.getItemId() %>" class="list-group-item"><%= result.getName() %></a>
 <% } %>
-        </div>
+          </div>
         </div>
       </div>
       <div class="row">

@@ -1,19 +1,65 @@
 <%@ page import="edu.ucla.cs.cs144.Item" %>
 <%@ page import="edu.ucla.cs.cs144.User" %>
 <%@ page import="edu.ucla.cs.cs144.Bid" %>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Basic Search Page">
+    <meta name="author" content="Spencer Brett & Daniel Daskalov">
 
-<head>
-<title>Item Data</title>
-</head>
+    <title>Item Data</title>
 
-<body>
-<form action="/eBay/item" method="GET">
-        <input type="text" name="itemId">
-        <input type="submit" value="Search">
-</form>
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.ico">
+    <!-- Add custom CSS here -->
+    <style>
+	body {margin-top: 60px;}
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="keywordSearch.html">eBay Search</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+            <li><a class="button" href="index.html">Home</a></li>
+            <li><a class="button active" href="keywordSearch.html">Keyword Search</a></li>
+            <li><a class="button" href="getItem.html">ID Search</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-lg-12">
+          <form class="form-inline" role="form" action="/eBay/item" method="GET">
+	    <div class="form-group">
+	      <label class="sr-only" for="itemId">Query</label>
+	      <input class="form-control" type="text" id="itemId" name="itemId" placeholder="Search">
+	    </div>
+            <input class="btn btn-default" type="submit" value="Search">
+          </form>
+
 <% Item item = (Item) request.getAttribute("itemData"); %>
-<h2>Item data:</h2>
+
+          <h2>Item data:</h2>
+          
 ID: <%= item.getItemID() %><br>
 Name: <%= item.getName() %><br>
 Category: <% for (String cat : item.getCategoryList()) { %>
@@ -45,6 +91,9 @@ Location: <%= current.getBidder().getLocation() %>
 Country: <%= current.getBidder().getCountry() %> 
 <% } %>Time: <%= current.getTime() %> Amount: <%= current.getAmount() %><br>
 <% } %>
+        </div>
+      </div>
+    </div><!-- /.container -->
 </body>
 
 </html>

@@ -16,10 +16,14 @@ public class SearchServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        
-        PrintWriter out = response.getWriter();
 
         String searchQuery = request.getParameter("q");
+        
+        if (searchQuery.isEmpty()) {
+            response.sendRedirect("/eBay/keywordSearch.html");
+            return;
+        }
+        
         Integer numResultsToSkip = new Integer(request
                 .getParameter("numResultsToSkip"));
         Integer numResultsToReturn = new Integer(request

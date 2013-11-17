@@ -58,6 +58,9 @@
 
 <% Item item = (Item) request.getAttribute("itemData"); %>
 
+<% if (item == null) { %>
+<h2>Item not found<h2>
+<% } else { %>
           <h2>Item data:</h2>
           
 ID: <%= item.getItemID() %><br>
@@ -90,6 +93,7 @@ Location: <%= current.getBidder().getLocation() %>
 <% if (current.getBidder().getCountry() != null) { %>
 Country: <%= current.getBidder().getCountry() %> 
 <% } %>Time: <%= current.getTime() %> Amount: <%= current.getAmount() %><br>
+<% } %>
 <% } %>
         </div>
       </div>

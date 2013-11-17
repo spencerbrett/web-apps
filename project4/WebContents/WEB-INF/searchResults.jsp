@@ -47,44 +47,45 @@
       <div class="row">
         <div class="col-lg-12">
           <form class="form-inline" role="form" action="/eBay/search" method="GET">
-	    <div class="form-group">
-	      <label class="sr-only" for="q">Query</label>
-	      <input class="form-control" type="text" id="q" name="q" placeholder="Search">
-	    </div>
-	    <input class="btn btn-default" type="submit" value="Search">
-	    <input type="hidden" name="numResultsToSkip" value="0">
+            <div class="form-group">
+              <label class="sr-only" for="q">Query</label>
+              <input class="form-control" type="text" id="q" name="q" placeholder="Search">
+            </div>
+            <input class="btn btn-default" type="submit" value="Search">
+            <input type="hidden" name="numResultsToSkip" value="0">
             <input type="hidden" name="numResultsToReturn" value="20">
           </form>
         
-<% String query = request.getParameter("q");
-   String numToSkip = request.getParameter("numResultsToSkip");
-   String numToReturn = request.getParameter("numResultsToReturn");
-   Integer numResultsToSkip = new Integer(numToSkip);
-   Integer numResultsToReturn = new Integer(numToReturn);
-   SearchResult[] results = (SearchResult[]) request.getAttribute("searchResults"); %>
+       <% String query = request.getParameter("q");
+          String numToSkip = request.getParameter("numResultsToSkip");
+          String numToReturn = request.getParameter("numResultsToReturn");
+          Integer numResultsToSkip = new Integer(numToSkip);
+          Integer numResultsToReturn = new Integer(numToReturn);
+          SearchResult[] results = (SearchResult[]) request.getAttribute("searchResults"); %>
         
           <h2>Search Results for &quot;<%= query %>&quot;:</h2>
           <div class="list-group">
-<% for (SearchResult result : results) { %>
-	    <a href="/eBay/item?itemId=<%= result.getItemId() %>" class="list-group-item"><%= result.getName() %></a>
-<% } %>
+            <% for (SearchResult result : results) { %>
+              <a href="/eBay/item?itemId=<%= result.getItemId() %>" class="list-group-item"><%= result.getName() %></a>
+            <% } %>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-lg-12">
-        <ul class="pager">
-<% if (numResultsToSkip == 0) { %>
-	        <li class="previous disabled"><a href="#">&larr; Prev</a></li>
-<% } else { %>
-	        <li class="previous"><a href="/eBay/search?q=<%= query %>&amp;numResultsToSkip=<%= numResultsToSkip-20 %>&amp;numResultsToReturn=20">&larr; Prev</a></li>
-<% } %>
-<% if (results.length < 20) { %>
-	        <li class="next disabled"><a href="#">Next &rarr;</a></li>
-<% } else { %>
-	        <li class="next"><a href="/eBay/search?q=<%= query %>&amp;numResultsToSkip=<%= numResultsToSkip+20 %>&amp;numResultsToReturn=20">Next &rarr;</a></li>
-<% } %>
-        </ul>
+          <ul class="pager">
+            <% if (numResultsToSkip == 0) { %>
+              <li class="previous disabled"><a href="#">&larr; Prev</a></li>
+            <% } else { %>
+              <li class="previous"><a href="/eBay/search?q=<%= query %>&amp;numResultsToSkip=<%= numResultsToSkip-20 %>&amp;numResultsToReturn=20">&larr; Prev</a></li>
+            <% } %>
+
+            <% if (results.length < 20) { %>
+              <li class="next disabled"><a href="#">Next &rarr;</a></li>
+            <% } else { %>
+              <li class="next"><a href="/eBay/search?q=<%= query %>&amp;numResultsToSkip=<%= numResultsToSkip+20 %>&amp;numResultsToReturn=20">Next &rarr;</a></li>
+            <% } %>
+          </ul>
         </div>
       </div>
     </div><!-- /.container -->

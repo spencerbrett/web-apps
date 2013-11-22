@@ -18,9 +18,38 @@
     <style>
 	body {margin-top: 60px;}
     </style>
+
+    <% Item item = (Item) request.getAttribute("itemData"); %>
+    <% String geolocation = item.getSeller().getLocation() + " " + item.getSeller().getCountry(); %>
+
+    <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+    <script type="text/javascript">
+      function initialize() {
+        var address = "<%=geolocation%>";
+        geocoder.geocode( { 'address': address}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            map.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+          } else {
+            document.writer("Geocode was not successful for the following reason: " + status);
+          }
+        });
+        var latlng = new google.maps.LatLng(34.063509,-118.44541);
+        var myOptions = {
+          zoom: 14, // default is 8  
+          center: latlng,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
+      }
+    </script>
   </head>
 
-  <body>
+  <body onload="initialize()">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -55,8 +84,6 @@
 	    </div>
             <input class="btn btn-default" type="submit" value="Search">
           </form>
-
-          <% Item item = (Item) request.getAttribute("itemData"); %>
 
           <% if (item == null) { %>
             <h2>Item not found<h2>
@@ -100,6 +127,8 @@
               <% } %>
           <% } %>
         </div>
+      </div>
+      <div id="map_canvas" class="container" style="width:500px; height:500px">
       </div>
     </div><!-- /.container -->
 

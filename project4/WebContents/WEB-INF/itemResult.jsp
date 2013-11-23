@@ -25,6 +25,16 @@
     <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
     <script type="text/javascript">
       function initialize() {
+        var latlng = new google.maps.LatLng(2.2,3.5);
+        var myOptions = {
+          zoom: 1,
+          center: latlng,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
+
+        geocoder = new google.maps.Geocoder();
         var address = "<%=geolocation%>";
         geocoder.geocode( { 'address': address}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
@@ -33,18 +43,25 @@
               map: map,
               position: results[0].geometry.location
             });
+            if (results[0].geometry.viewport) 
+              map.fitBounds(results[0].geometry.viewport);
           } else {
-            document.writer("Geocode was not successful for the following reason: " + status);
+            var country = "<%=item.getSeller().getCountry()%>";
+            geocoder.geocode( { 'address': country}, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                  map: map,
+                  position: results[0].geometry.location
+                });
+                if (results[0].geometry.viewport) 
+                  map.fitBounds(results[0].geometry.viewport);
+              } else {
+                // If no country or location results use default settings: world map
+              }
+            });
           }
         });
-        var latlng = new google.maps.LatLng(34.063509,-118.44541);
-        var myOptions = {
-          zoom: 14, // default is 8  
-          center: latlng,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
-            myOptions);
       }
     </script>
   </head>

@@ -1,14 +1,11 @@
 package edu.ucla.cs.cs144;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import javax.servlet.Servlet;
@@ -26,7 +23,7 @@ public class ProxyServlet extends HttpServlet implements Servlet {
             HttpServletResponse response) throws ServletException, IOException {
         
         PrintWriter out = response.getWriter();
-        
+      
         String query = request.getParameter("query");
         String charset = "UTF-8";
 

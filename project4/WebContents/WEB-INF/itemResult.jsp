@@ -109,7 +109,9 @@
       </div>
 
       <div id="item-panel">
-        <div id="map_canvas" class="container" style="width:500px; height:500px"></div>
+        <div class="map">
+        <div id="map_canvas" class="container"></div>
+      </div>
         <div id="item-info">
           <% if (item == null) { %>
             <h2>Item not found<h2>

@@ -14,8 +14,14 @@
     <!-- Add custom CSS here -->
     <style>
 	body {margin-top: 60px;}
-	</style>
+    </style>
 
+    <script type="text/javascript" src="js/autoSuggestDropdown.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var oTextbox = new AutoSuggestControl(document.getElementById("q"), new SuggestionProvider()); 
+        }
+    </script>
   </head>
 
   <body>
@@ -51,7 +57,7 @@
         <form class="form-inline" role="form" action="/eBay/search" method="GET">
 	        <div class="form-group">
 	            <label class="sr-only" for="q">Query</label>
-	            <input class="form-control" type="text" id="q" name="q" placeholder="Search">
+	            <input class="form-control" type="text" id="q" name="q" placeholder="Search" onkeyup="oTextbox.handleKeyUp(this.value)">
 	        </div>
 	        <input class="btn btn-default" type="submit" value="Search">
 	        <input type="hidden" name="numResultsToSkip" value="0">
@@ -64,6 +70,6 @@
 
     <!-- Bootstrap core JavaScript -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/bootstrap.js"></script>
+    <!-- <script src="js/bootstrap.js"></script> -->
   </body>
 </html>

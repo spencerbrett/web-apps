@@ -33,11 +33,15 @@ AutoSuggestControl.prototype.handleKeyUp = function (oEvent) {
 
 AutoSuggestControl.prototype.init = function () {
     var oThis = this;
-    this.textbox.onkeyup = oThis.handleKeyUp(oEvent);
+    this.textbox.onkeyup = function (oEvent) {
+        oThis.handleKeyUp(oEvent);
+    }
 };
 
+xmlHttp = new XMLHttpRequest();
+
 function SuggestionProvider() {
-    this.xmlHttp = new XMLHttpRequest();
+
 };
 
 SuggestionProvider.prototype.requestSuggestions = function (oAutoSuggestControl) {
@@ -46,21 +50,18 @@ SuggestionProvider.prototype.requestSuggestions = function (oAutoSuggestControl)
     if (sTextboxValue.length > 0){
         var request = "/eBay/suggest?query="+encodeURI(sTextboxValue);
 
-        this.xmlHttp.open("GET", request); 
-        this.xmlHttp.onreadystatechange = this.showSuggestion; 
-        this.xmlHttp.send(null);
+        xmlHttp.open("GET", request);
+        xmlHttp.onreadystatechange = function(){if(xmlHttp.readyState == 4){showSuggestions(oAutoSuggestControl)}};
+        xmlHttp.send(null);
     }
 }
 
-SuggestionProvider.prototype.showSuggestions = function () {
-    if (xmlHttp.readyState == 4) {
-        // get the CompleteSuggestion elements from the response
-        var s = this.xmlHttp.responseXML.getElementsByTagName('CompleteSuggestion');
+function showSuggestions(oAutoSuggestControl) {
+    var s = xmlHttp.responseXML.getElementsByTagName('CompleteSuggestion');
 
-        var aSuggestions = [];
-        for (var i=0; i < s.length; i++) { 
-            aSuggestions.push(s[i].childNodes[0].getAttribute("data"));
-        } 
-        oAutoSuggestControl.autosuggest(aSuggestions);
-    } 
+    var aSuggestions = [];
+    for (var i=0; i < s.length; i++) {
+        aSuggestions.push(s[i].childNodes[0].getAttribute("data"));
+    }
+    oAutoSuggestControl.autosuggest(aSuggestions);
 };

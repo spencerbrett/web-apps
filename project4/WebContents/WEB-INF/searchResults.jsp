@@ -11,11 +11,19 @@
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/dropdown.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.ico">
     <!-- Add custom CSS here -->
     <style>
 	body {margin-top: 60px;}
     </style>
+
+    <script type="text/javascript" src="js/autoSuggestDropdown.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var oTextbox = new AutoSuggestControl(document.getElementById("q"), new SuggestionProvider()); 
+        }
+    </script>
   </head>
 
   <body>
@@ -49,7 +57,7 @@
           <form class="form-inline" role="form" action="/eBay/search" method="GET">
             <div class="form-group">
               <label class="sr-only" for="q">Query</label>
-              <input class="form-control" type="text" id="q" name="q" placeholder="Search">
+              <input class="form-control" type="text" id="q" name="q" placeholder="Search" autocomplete="off">
             </div>
             <input class="btn btn-default" type="submit" value="Search">
             <input type="hidden" name="numResultsToSkip" value="0">

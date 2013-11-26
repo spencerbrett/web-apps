@@ -25,6 +25,9 @@ it seemed to contain a race condition and a fast typist would find it
 annoying and inconvenient. We also added some improvements to the dropdown
 like cycling back to top or bottom when using the arrow keys and others.
 
+We disabled Firefox's autocomplete through an HTML option so it is not required
+to disable the setting in the browser options.
+
 We are also not displaying the item IDs in the search results page for
 a better look. We display the item ID in the item information page. We also
 don't display the country and location of the bidders to create a less

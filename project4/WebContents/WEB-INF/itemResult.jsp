@@ -1,6 +1,9 @@
 <%@ page import="edu.ucla.cs.cs144.Item" %>
 <%@ page import="edu.ucla.cs.cs144.User" %>
 <%@ page import="edu.ucla.cs.cs144.Bid" %>
+<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.util.ArrayList" %>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -91,62 +94,68 @@
     </nav>
 
     <div class="container">
+      <div class="search">
+        <div class="row">
+          <div class="col-lg-12">
+            <form class="form-inline" role="form" action="/eBay/item" method="GET">
+	            <div class="form-group">
+                <label class="sr-only" for="itemId">Query</label>
+	              <input class="form-control" type="text" id="itemId" name="itemId" placeholder="Search">
+	            </div>
+              <input class="btn btn-default" type="submit" value="Search">
+            </form>
+          </div>
+        </div>
+      </div>
 
-      <div class="row">
-        <div class="col-lg-12">
-          <form class="form-inline" role="form" action="/eBay/item" method="GET">
-	    <div class="form-group">
-	      <label class="sr-only" for="itemId">Query</label>
-	      <input class="form-control" type="text" id="itemId" name="itemId" placeholder="Search">
-	    </div>
-            <input class="btn btn-default" type="submit" value="Search">
-          </form>
-
+      <div id="item-panel">
+        <div id="map_canvas" class="container" style="width:500px; height:500px"></div>
+        <div id="item-info">
           <% if (item == null) { %>
             <h2>Item not found<h2>
           <% } else { %>
-            <h2>Item data:</h2>
-          
-              ID: <%= item.getItemID() %><br>
-              Name: <%= item.getName() %><br>
-              Category: <% for (String cat : item.getCategoryList()) { %>
-                             <%= cat %>, 
-                        <% } %><br>
-              Description: <%= item.getDescription() %><br>
-              Seller: <%= item.getSeller().getUserId() %><br>
-              Seller Rating: <%= item.getSeller().getRating() %><br>
-              Location: <%= item.getSeller().getLocation() %><br>
-              Country: <%= item.getSeller().getCountry() %><br>
-              Started: <%= item.getStarted() %><br>
-              Ends: <%= item.getEnds() %><br>
-
+              <% DecimalFormat df = new DecimalFormat("$###,###.00") ;%>
+              <span><h3><b><%= item.getName() %> </b></h3></span>(Item #<%= item.getItemID() %>)</span>
+              <p><% for (String cat : item.getCategoryList()) { %>
+                            |<span style="font-style:italic"> <%= cat %> </span>| 
+              <% } %></p>
+              <p>by <a href="#"><%= item.getSeller().getUserId() %></a> (<%= item.getSeller().getRating() %>) from <%= item.getSeller().getLocation() %>, <%= item.getSeller().getCountry() %></p>
+              <hr />
+              <p><h4>
               <% if(item.getBuy_Price() != 0) { %>
-                Buy Price: $<%= item.getBuy_Price() %><br>
+                Buy Price: <%= df.format(item.getBuy_Price())%> | 
               <% } %>
-
-              First Bid: $<%= item.getFirst_Bid() %><br>
-              Current Bid: $<%= item.getCurrently() %><br>
-              Number of bids: <%= item.getNumber_of_Bids() %><br>
+              First Bid: <%= df.format(item.getFirst_Bid()) %> | 
+              Current: <%= df.format(item.getCurrently()) %></h4> </p>
+              <p>Started at <b><%= item.getStarted() %></b> | 
+              Ends at <b><%= item.getEnds() %></b></p>
+              <hr />
+              <p><h4><b>Description</b></h4> </p>
+              <p><%= item.getDescription() %></p>
+              <hr />
+              <p><h4><b>Bids (<%= item.getNumber_of_Bids() %>)</b></h4>
 
               <% if(item.getNumber_of_Bids() > 0) { %>
-                Bids:<br>
-                -------------------------------------------------------------------------------------------------------------------------------<br>
-              <% } %>
-
+              <table>
+                <tbody>
+                  <tr>
+                    <th align="left" width="300px">Bidder</th>
+                    <th align="center" width="150px"> Time </th>
+                    <th align="right" width="150px">Amount</th>
+                  </tr>
               <% for (Bid current : item.getBidList()) { %>
-                Bidder: <%= current.getBidder().getUserId() %> Rating: <%= current.getBidder().getRating() %>
-                  <% if (current.getBidder().getLocation() != null) { %>
-                    Location: <%= current.getBidder().getLocation() %> 
-                  <% } %>
-                  <% if (current.getBidder().getCountry() != null) { %>
-                    Country: <%= current.getBidder().getCountry() %> 
-                  <% } %>Time: <%= current.getTime() %> Amount: <%= current.getAmount() %><br>
+                  <tr>
+                    <td align="left" width="300px"><a href="#"><%= current.getBidder().getUserId() %></a> (<%= current.getBidder().getRating() %>)</td>
+                    <td align="center" width="150px"><%= current.getTime() %></td>
+                    <td align="center" width="150px"><%= df.format(current.getAmount()) %></td>
+                  </tr>
               <% } %>
+                </tbody>
+              </table>
+            <% } %>
           <% } %>
         </div>
-      </div>
-      <div id="map_canvas" class="container" style="width:500px; height:500px">
-      </div>
+      </div><!-- /.item-panel -->
     </div><!-- /.container -->
 
     <!-- Bootstrap core JavaScript -->

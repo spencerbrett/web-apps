@@ -1,9 +1,11 @@
 div.suggestions {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    border: 1px solid black;
+    border: 1px solid #CACACA;
     position: absolute;
-    background: #ffffff; 
+    background: #ffffff;
+    padding: 3px 10px;
+    color: #333333;
 }
 
 div.suggestions div {

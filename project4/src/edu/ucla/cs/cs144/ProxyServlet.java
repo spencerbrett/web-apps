@@ -21,30 +21,35 @@ public class ProxyServlet extends HttpServlet implements Servlet {
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        
-        PrintWriter out = response.getWriter();
-      
-        String query = request.getParameter("query");
-        String charset = "UTF-8";
 
-        URL url = new URL("http://google.com/complete/search?output=toolbar&q="
-                + URLEncoder.encode(query, charset));
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Accept-Charset", charset);
-        conn.setRequestProperty("Content-type", "text/xml");
+        try {
+            PrintWriter out = response.getWriter();
 
-        StringBuffer content = new StringBuffer();
-        BufferedReader googleResponse = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-        String line;
-        while ((line = googleResponse.readLine()) != null) {
-          content.append(line + "\n");
+            String query = request.getParameter("query");
+            String charset = "UTF-8";
+
+            URL url = new URL(
+                    "http://google.com/complete/search?output=toolbar&q="
+                            + URLEncoder.encode(query, charset));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept-Charset", charset);
+            conn.setRequestProperty("Content-type", "text/xml");
+
+            StringBuffer content = new StringBuffer();
+            BufferedReader googleResponse = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = googleResponse.readLine()) != null) {
+                content.append(line + "\n");
+            }
+
+            conn.disconnect();
+
+            response.setContentType("text/xml;charset=UTF-8");
+            out.write(content.toString());
+        } catch (Exception e) {
+            response.sendRedirect("/eBay/error.html");
         }
-        
-        conn.disconnect();
-        
-        response.setContentType("text/xml;charset=UTF-8");
-        out.write(content.toString());
     }
 }

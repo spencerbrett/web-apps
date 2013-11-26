@@ -6,22 +6,8 @@ function AutoSuggestControl(oTextbox, oProvider) {
     this.init();
 };
 
-AutoSuggestControl.prototype.selectRange = function (iStart, iLength) {
-    this.textbox.setSelectionRange(iStart, iLength);
-    this.textbox.focus(); 
-};
-
-AutoSuggestControl.prototype.typeAhead = function (sSuggestion) {
-        var iLen = this.textbox.value.length; 
-        this.textbox.value = sSuggestion; 
-        this.selectRange(iLen, sSuggestion.length);
-};
-
-AutoSuggestControl.prototype.autosuggest = function (aSuggestions, bTypeAhead) {
+AutoSuggestControl.prototype.autosuggest = function (aSuggestions) {
     if (aSuggestions.length > 0 && this.textbox.value.length > 0) {
-        if (bTypeAhead) {
-            this.typeAhead(aSuggestions[0]);
-        }
         this.showSuggestions(aSuggestions);
     } else {
         this.hideSuggestions();
@@ -32,11 +18,11 @@ AutoSuggestControl.prototype.handleKeyUp = function (oEvent) {
      var iKeyCode = oEvent.keyCode;
 
     if (iKeyCode == 8 || iKeyCode == 46) {
-        this.provider.requestSuggestions(this, false);
+        this.provider.requestSuggestions(this);
     } else if (iKeyCode < 32 || (iKeyCode >= 33 && iKeyCode <= 46) || (iKeyCode >= 112 && iKeyCode <= 123)) {
         //ignore
-    } else {
-        this.provider.requestSuggestions(this, true);
+    } else {        
+        this.provider.requestSuggestions(this);
     }
 };
 
@@ -63,29 +49,30 @@ function SuggestionProvider() {
 
 };
 
-SuggestionProvider.prototype.requestSuggestions = function (oAutoSuggestControl, bTypeAhead) {
+SuggestionProvider.prototype.requestSuggestions = function (oAutoSuggestControl) {
     var sTextboxValue = oAutoSuggestControl.textbox.value;
 
     if (sTextboxValue.length > 0){
         var request = "/eBay/suggest?query="+encodeURI(sTextboxValue);
 
         xmlHttp.open("GET", request);
-        xmlHttp.onreadystatechange = function(){if(xmlHttp.readyState == 4){showSuggestions(oAutoSuggestControl, bTypeAhead)}};
+        xmlHttp.onreadystatechange = function(){if(xmlHttp.readyState == 4){showSuggestions(oAutoSuggestControl)}};
         xmlHttp.send(null);
     } else {
         var aSuggestions = [];
-        oAutoSuggestControl.autosuggest(aSuggestions, bTypeAhead);
+        this.cur = -1;
+        oAutoSuggestControl.autosuggest(aSuggestions);
     }
 }
 
-function showSuggestions(oAutoSuggestControl, bTypeAhead) {
+function showSuggestions(oAutoSuggestControl) {
     var s = xmlHttp.responseXML.getElementsByTagName('CompleteSuggestion');
 
     var aSuggestions = [];
     for (var i=0; i < s.length; i++) {
         aSuggestions.push(s[i].childNodes[0].getAttribute("data"));
     }
-    oAutoSuggestControl.autosuggest(aSuggestions, bTypeAhead);
+    oAutoSuggestControl.autosuggest(aSuggestions);
 };
 
 AutoSuggestControl.prototype.hideSuggestions = function () {

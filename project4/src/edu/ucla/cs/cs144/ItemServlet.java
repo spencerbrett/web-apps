@@ -25,6 +25,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
 
+        try {
         String itemId = request.getParameter("itemId");
 
         if (itemId.isEmpty()) {
@@ -42,5 +43,8 @@ public class ItemServlet extends HttpServlet implements Servlet {
         request.setAttribute("itemData", myItem);
         request.getRequestDispatcher("/WEB-INF/itemResult.jsp").forward(
                 request, response);
+        } catch (Exception e) {
+            response.sendRedirect("/eBay/error.html");
+        }
     }
 }

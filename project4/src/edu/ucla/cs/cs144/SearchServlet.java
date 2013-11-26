@@ -17,22 +17,27 @@ public class SearchServlet extends HttpServlet implements Servlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
 
-        String searchQuery = request.getParameter("q");
-        
-        if (searchQuery.isEmpty()) {
-            response.sendRedirect("/eBay/keywordSearch.html");
-            return;
+        try {
+            String searchQuery = request.getParameter("q");
+
+            if (searchQuery.isEmpty()) {
+                response.sendRedirect("/eBay/keywordSearch.html");
+                return;
+            }
+
+            Integer numResultsToSkip = new Integer(request
+                    .getParameter("numResultsToSkip"));
+            Integer numResultsToReturn = new Integer(request
+                    .getParameter("numResultsToReturn"));
+
+            SearchResult[] basicSearchResult = AuctionSearchClient.basicSearch(
+                    searchQuery, numResultsToSkip, numResultsToReturn);
+
+            request.setAttribute("searchResults", basicSearchResult);
+            request.getRequestDispatcher("/WEB-INF/searchResults.jsp").forward(
+                    request, response);
+        } catch (Exception e) {
+            response.sendRedirect("/eBay/error.html");
         }
-        
-        Integer numResultsToSkip = new Integer(request
-                .getParameter("numResultsToSkip"));
-        Integer numResultsToReturn = new Integer(request
-                .getParameter("numResultsToReturn"));
-
-        SearchResult[] basicSearchResult = AuctionSearchClient.basicSearch(
-                searchQuery, numResultsToSkip, numResultsToReturn);
-
-        request.setAttribute("searchResults", basicSearchResult);
-        request.getRequestDispatcher("/WEB-INF/searchResults.jsp").forward(request, response);
     }
 }

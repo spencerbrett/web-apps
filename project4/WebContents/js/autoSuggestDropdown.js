@@ -18,7 +18,7 @@ AutoSuggestControl.prototype.typeAhead = function (sSuggestion) {
 };
 
 AutoSuggestControl.prototype.autosuggest = function (aSuggestions, bTypeAhead) {
-    if (aSuggestions.length > 0) {
+    if (aSuggestions.length > 0 && this.textbox.value.length > 0) {
         if (bTypeAhead) {
             this.typeAhead(aSuggestions[0]);
         }
@@ -72,6 +72,9 @@ SuggestionProvider.prototype.requestSuggestions = function (oAutoSuggestControl,
         xmlHttp.open("GET", request);
         xmlHttp.onreadystatechange = function(){if(xmlHttp.readyState == 4){showSuggestions(oAutoSuggestControl, bTypeAhead)}};
         xmlHttp.send(null);
+    } else {
+        var aSuggestions = [];
+        oAutoSuggestControl.autosuggest(aSuggestions, bTypeAhead);
     }
 }
 
@@ -173,8 +176,9 @@ AutoSuggestControl.prototype.showSuggestions = function (aSuggestions) {
 AutoSuggestControl.prototype.nextSuggestion = function () {
     var cSuggestionNodes = this.layer.childNodes;
 
-    if (cSuggestionNodes.length > 0 && this.cur < cSuggestionNodes.length-1) {
-        var oNode = cSuggestionNodes[++this.cur];
+    if (cSuggestionNodes.length > 0) {
+        this.cur = ++this.cur % cSuggestionNodes.length;
+        var oNode = cSuggestionNodes[this.cur];
         this.highlightSuggestion(oNode);
         this.textbox.value = oNode.firstChild.nodeValue; 
     }
@@ -183,8 +187,12 @@ AutoSuggestControl.prototype.nextSuggestion = function () {
 AutoSuggestControl.prototype.previousSuggestion = function () {
     var cSuggestionNodes = this.layer.childNodes;
 
-    if (cSuggestionNodes.length > 0 && this.cur > 0) {
-        var oNode = cSuggestionNodes[--this.cur];
+    if (cSuggestionNodes.length > 0) {
+        this.cur--;
+        if (this.cur < 0) {
+            this.cur = cSuggestionNodes.length-1;
+        }
+        var oNode = cSuggestionNodes[this.cur];
         this.highlightSuggestion(oNode);
         this.textbox.value = oNode.firstChild.nodeValue; 
     }
@@ -203,5 +211,3 @@ AutoSuggestControl.prototype.handleKeyDown = function (oEvent) {
             break;
     }
 };
-
-

@@ -11,6 +11,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/dropdown.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.ico">
     <!-- Add custom CSS here -->
     <style>

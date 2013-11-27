@@ -41,7 +41,6 @@
 
         geocoder = new google.maps.Geocoder();
         var address = "<%=geolocation%>";
-        if (address) {
         geocoder.geocode( { 'address': address}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
             map.setCenter(results[0].geometry.location);
@@ -68,7 +67,6 @@
             });
           }
         });
-        }
       }
     </script>
     <% } %>

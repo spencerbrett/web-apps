@@ -26,23 +26,23 @@ public class ItemServlet extends HttpServlet implements Servlet {
             HttpServletResponse response) throws ServletException, IOException {
 
         try {
-        String itemId = request.getParameter("itemId");
+            String itemId = request.getParameter("itemId");
 
-        if (itemId.isEmpty()) {
-            response.sendRedirect("/eBay/getItem.html");
-            return;
-        }
+            if (itemId.isEmpty()) {
+                response.sendRedirect("/eBay/getItem.html");
+                return;
+            }
 
-        Item myItem = null;
-        String itemData = AuctionSearchClient.getXMLDataForItemId(itemId);
-        if (!itemData.isEmpty()) {
-            myItem = new Item(itemData);
-            myItem.sortBids();
-        }
+            Item myItem = null;
+            String itemData = AuctionSearchClient.getXMLDataForItemId(itemId);
+            if (!itemData.isEmpty()) {
+                myItem = new Item(itemData);
+                myItem.sortBids();
+            }
 
-        request.setAttribute("itemData", myItem);
-        request.getRequestDispatcher("/WEB-INF/itemResult.jsp").forward(
-                request, response);
+            request.setAttribute("itemData", myItem);
+            request.getRequestDispatcher("/WEB-INF/itemResult.jsp").forward(
+                    request, response);
         } catch (Exception e) {
             response.sendRedirect("/eBay/error.html");
         }

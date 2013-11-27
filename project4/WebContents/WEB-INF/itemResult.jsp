@@ -23,7 +23,9 @@
     </style>
 
     <% Item item = (Item) request.getAttribute("itemData"); %>
-    <% String geolocation = item.getSeller().getLocation() + " " + item.getSeller().getCountry(); %>
+    <% String geolocation = null; %>
+    <% if (item != null) { %>
+    <%   geolocation = item.getSeller().getLocation() + " " + item.getSeller().getCountry(); %>
 
     <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
     <script type="text/javascript">
@@ -39,6 +41,7 @@
 
         geocoder = new google.maps.Geocoder();
         var address = "<%=geolocation%>";
+        if (address) {
         geocoder.geocode( { 'address': address}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
             map.setCenter(results[0].geometry.location);
@@ -65,8 +68,10 @@
             });
           }
         });
+        }
       }
     </script>
+    <% } %>
   </head>
 
   <body onload="initialize()">

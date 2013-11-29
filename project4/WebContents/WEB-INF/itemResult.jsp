@@ -127,11 +127,13 @@
               <p>by <a href="#"><%= item.getSeller().getUserId() %></a> (<%= item.getSeller().getRating() %>) from <%= item.getSeller().getLocation() %>, <%= item.getSeller().getCountry() %></p>
               <hr />
               <p><h4>
-              <% if(item.getBuy_Price() != 0) { %>
-                Buy Price: <%= df.format(item.getBuy_Price())%> | 
-              <% } %>
               First Bid: <%= df.format(item.getFirst_Bid()) %> | 
               Current: <%= df.format(item.getCurrently()) %></h4> </p>
+              <p><h4>
+              <% if(item.getBuy_Price() != 0) { %>
+                Buy Price: <%= df.format(item.getBuy_Price())%> <a class="btn btn-mini btn-primary" href="/eBay/buy">Buy</a>
+              <% } %>
+              </h4></p>
               <p>Started at <b><%= item.getStarted() %></b> | 
               Ends at <b><%= item.getEnds() %></b></p>
               <hr />

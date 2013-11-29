@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,6 +39,12 @@ public class ItemServlet extends HttpServlet implements Servlet {
             if (!itemData.isEmpty()) {
                 myItem = new Item(itemData);
                 myItem.sortBids();
+                if (myItem.getBuy_Price() != 0) {
+                    HttpSession session = request.getSession(true);
+                    session.setAttribute("itemId", myItem.getItemID());
+                    session.setAttribute("itemName", myItem.getName());
+                    session.setAttribute("buyPrice", myItem.getBuy_Price());
+                }
             }
 
             request.setAttribute("itemData", myItem);

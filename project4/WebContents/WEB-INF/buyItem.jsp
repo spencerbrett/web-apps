@@ -21,6 +21,7 @@
        Float buyPrice = (Float) request.getAttribute("buyPrice");
        DecimalFormat df = new DecimalFormat("$###,###.00");
        String path = "https://" + request.getServerName() + ":8443" + request.getContextPath() + "/confirm"; %>
+    <script type="text/javascript" src="js/validation.js"></script>
   </head>
 
   <body>
@@ -56,8 +57,8 @@
           <p><b>ID:</b> <%= itemId %></p>
           <p><b>Name:</b> <%= itemName %></p>
           <p><b>Buy price:</b> <%= df.format(buyPrice) %></p>
-          <p><b>Enter a credit card number:</b></p>
-          <form class="form-inline" role="form" action="<%= path %>" method="POST">
+          <p><b>Enter a credit card number</b> (12-18 characters, [0-9] only)<b>:</b></p>
+          <form name="cardForm" class="form-inline" role="form" action="<%= path %>" method="POST" onsubmit="return validateCard(this);">
             <div class="form-group">
               <label class="sr-only" for="creditCard">#</label>
               <input class="form-control" type="text" id="creditCard" name="creditCard" placeholder="#" autocomplete="off">

@@ -24,6 +24,11 @@ section,
 summary {
   display: block;
 }
+div.customErrorMessage {
+  color: #CC0000;
+  font-style: italic;
+  position: absolute;
+}
 #item-panel { 
   position : relative;
 }

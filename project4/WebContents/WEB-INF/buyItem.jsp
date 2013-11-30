@@ -1,12 +1,13 @@
+<%@ page import="java.text.DecimalFormat" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Basic error Page">
+    <meta name="description" content="Item purchase preview page">
     <meta name="author" content="Spencer Brett & Daniel Daskalov">
 
-    <title>Error!</title>
+    <title>Purchase preview</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
@@ -14,8 +15,12 @@
     <!-- Add custom CSS here -->
     <style>
 	body {margin-top: 60px;}
-	</style>
-
+    </style>
+    <% Integer itemId = (Integer) request.getAttribute("itemId");
+       String itemName = (String) request.getAttribute("itemName");
+       Float buyPrice = (Float) request.getAttribute("buyPrice");
+       DecimalFormat df = new DecimalFormat("$###,###.00");
+       String path = "https://" + request.getServerName() + ":8443" + request.getContextPath() + "/confirm"; %>
   </head>
 
   <body>
@@ -47,8 +52,18 @@
 
       <div class="row">
         <div class="col-lg-12">
-          <h1>Error</h1>
-          <p>We encountered a problem. Sorry!</p>
+          <h2>Item Purchase Preview</h2>
+          <p><b>ID:</b> <%= itemId %></p>
+          <p><b>Name:</b> <%= itemName %></p>
+          <p><b>Buy price:</b> <%= df.format(buyPrice) %></p>
+          <p><b>Enter a credit card number:</b></p>
+          <form class="form-inline" role="form" action="<%= path %>" method="POST">
+            <div class="form-group">
+              <label class="sr-only" for="creditCard">#</label>
+              <input class="form-control" type="text" id="creditCard" name="creditCard" placeholder="#" autocomplete="off">
+            </div>
+            <input class="btn btn-primary" type="submit" value="Buy">
+          </form>
         </div>
       </div>
 

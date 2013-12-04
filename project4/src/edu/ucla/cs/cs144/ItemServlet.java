@@ -2,6 +2,8 @@ package edu.ucla.cs.cs144;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.ConfigurationException;
 import javax.servlet.Servlet;
@@ -26,7 +28,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
 
-        try {
+//        try {
             String itemId = request.getParameter("itemId");
 
             if (itemId.isEmpty()) {
@@ -40,18 +42,26 @@ public class ItemServlet extends HttpServlet implements Servlet {
                 myItem = new Item(itemData);
                 myItem.sortBids();
                 if (myItem.getBuy_Price() != 0) {
+                    ItemPurchaseData itemInfo = new ItemPurchaseData(myItem
+                            .getItemID(), myItem.getName(), myItem
+                            .getBuy_Price());
+                    Map<Integer, ItemPurchaseData> itemHistory = null;
                     HttpSession session = request.getSession(true);
-                    session.setAttribute("itemId", myItem.getItemID());
-                    session.setAttribute("itemName", myItem.getName());
-                    session.setAttribute("buyPrice", myItem.getBuy_Price());
+                    if (session.isNew()) {
+                        itemHistory = new HashMap<Integer, ItemPurchaseData>();
+                    } else {
+                        itemHistory = (HashMap) session.getAttribute("itemHistory");
+                    }
+                    itemHistory.put(myItem.getItemID(), itemInfo);
+                    session.setAttribute("itemHistory", itemHistory);
                 }
             }
 
             request.setAttribute("itemData", myItem);
             request.getRequestDispatcher("/WEB-INF/itemResult.jsp").forward(
                     request, response);
-        } catch (Exception e) {
-            response.sendRedirect("/eBay/error.html");
-        }
+//        } catch (Exception e) {
+//            response.sendRedirect("/eBay/error.html");
+//        }
     }
 }

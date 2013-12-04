@@ -1,0 +1,9 @@
+.project5-text {
+   width: 25%;
+}
+
+@media (max-width: 500px) {
+  .project5-text {
+    width: 97%;
+  }
+}

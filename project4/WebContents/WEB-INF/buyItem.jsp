@@ -63,6 +63,7 @@
               <label class="sr-only" for="creditCard">#</label>
               <input class="form-control" type="text" id="creditCard" name="creditCard" placeholder="#" autocomplete="off">
             </div>
+            <input type="hidden" name="itemId" value="<%= itemId %>">
             <input class="btn btn-primary" type="submit" value="Buy">
           </form>
         </div>

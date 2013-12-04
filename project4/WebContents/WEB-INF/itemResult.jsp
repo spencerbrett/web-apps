@@ -131,7 +131,7 @@
               Current: <%= df.format(item.getCurrently()) %></h4> </p>
               <p><h4>
               <% if(item.getBuy_Price() != 0) { %>
-                Buy Price: <%= df.format(item.getBuy_Price())%> <a class="btn btn-mini btn-primary" href="/eBay/buy">Buy</a>
+                Buy Price: <%= df.format(item.getBuy_Price())%> <a class="btn btn-mini btn-primary" href="/eBay/buy?itemId=<%= item.getItemID() %>">Buy</a>
               <% } %>
               </h4></p>
               <p>Started at <b><%= item.getStarted() %></b> | 

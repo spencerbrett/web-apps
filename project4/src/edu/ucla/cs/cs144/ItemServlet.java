@@ -2,6 +2,8 @@ package edu.ucla.cs.cs144;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.ConfigurationException;
 import javax.servlet.Servlet;
@@ -40,10 +42,22 @@ public class ItemServlet extends HttpServlet implements Servlet {
                 myItem = new Item(itemData);
                 myItem.sortBids();
                 if (myItem.getBuy_Price() != 0) {
+                    ItemPurchaseData itemInfo = new ItemPurchaseData(myItem
+                            .getItemID(), myItem.getName(), myItem
+                            .getBuy_Price());
+                    Map<Integer, ItemPurchaseData> itemHistory = null;
                     HttpSession session = request.getSession(true);
-                    session.setAttribute("itemId", myItem.getItemID());
-                    session.setAttribute("itemName", myItem.getName());
-                    session.setAttribute("buyPrice", myItem.getBuy_Price());
+                    if (session.isNew()) {
+                        itemHistory = new HashMap<Integer, ItemPurchaseData>();
+                    } else {
+                        itemHistory = (HashMap<Integer, ItemPurchaseData>) session
+                                .getAttribute("itemHistory");
+                        if (itemHistory == null) {
+                            itemHistory = new HashMap<Integer, ItemPurchaseData>();
+                        }
+                    }
+                    itemHistory.put(myItem.getItemID(), itemInfo);
+                    session.setAttribute("itemHistory", itemHistory);
                 }
             }
 

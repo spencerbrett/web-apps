@@ -3,6 +3,8 @@ package edu.ucla.cs.cs144;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -37,19 +39,33 @@ public class ConfirmServlet extends HttpServlet implements Servlet {
             }
 
             String creditCard = request.getParameter("creditCard");
+            String itemId = request.getParameter("itemId");
             creditCard = maskCardNumber(creditCard);
 
-            request.setAttribute("itemId", (Integer) session
-                    .getAttribute("itemId"));
-            request.setAttribute("itemName", (String) session
-                    .getAttribute("itemName"));
-            request.setAttribute("buyPrice", (Float) session
-                    .getAttribute("buyPrice"));
+            Map<Integer, ItemPurchaseData> itemHistory = (HashMap<Integer, ItemPurchaseData>) session
+                    .getAttribute("itemHistory");
+            if (itemHistory == null) {
+                response.sendRedirect(path + "/keywordSearch.html");
+                return;
+            }
+            
+            ItemPurchaseData itemData = null;
+            if (!itemHistory.containsKey(Integer.parseInt(itemId))) {
+                response.sendRedirect("/eBay/keywordSearch.html");
+                return;
+            } else {
+                itemData = itemHistory.get(Integer.parseInt(itemId));
+            }
+
+            request.setAttribute("itemId", itemData.getItemId());
+            request.setAttribute("itemName", itemData.getItemName());
+            request.setAttribute("buyPrice", itemData.getBuyPrice());
             request.setAttribute("card", creditCard);
             request.setAttribute("time", new Date());
 
-            session.invalidate();
-
+            itemHistory.remove(Integer.parseInt(itemId));
+            session.setAttribute("itemHistory", itemHistory);
+            
             request.getRequestDispatcher("/WEB-INF/purchaseConfirmation.jsp")
                     .forward(request, response);
         } catch (Exception e) {

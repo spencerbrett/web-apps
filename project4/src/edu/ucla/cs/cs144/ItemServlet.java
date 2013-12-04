@@ -28,7 +28,7 @@ public class ItemServlet extends HttpServlet implements Servlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
 
-//        try {
+        try {
             String itemId = request.getParameter("itemId");
 
             if (itemId.isEmpty()) {
@@ -50,7 +50,11 @@ public class ItemServlet extends HttpServlet implements Servlet {
                     if (session.isNew()) {
                         itemHistory = new HashMap<Integer, ItemPurchaseData>();
                     } else {
-                        itemHistory = (HashMap) session.getAttribute("itemHistory");
+                        itemHistory = (HashMap<Integer, ItemPurchaseData>) session
+                                .getAttribute("itemHistory");
+                        if (itemHistory == null) {
+                            itemHistory = new HashMap<Integer, ItemPurchaseData>();
+                        }
                     }
                     itemHistory.put(myItem.getItemID(), itemInfo);
                     session.setAttribute("itemHistory", itemHistory);
@@ -60,8 +64,8 @@ public class ItemServlet extends HttpServlet implements Servlet {
             request.setAttribute("itemData", myItem);
             request.getRequestDispatcher("/WEB-INF/itemResult.jsp").forward(
                     request, response);
-//        } catch (Exception e) {
-//            response.sendRedirect("/eBay/error.html");
-//        }
+        } catch (Exception e) {
+            response.sendRedirect("/eBay/error.html");
+        }
     }
 }

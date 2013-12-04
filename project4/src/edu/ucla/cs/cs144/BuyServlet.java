@@ -27,14 +27,19 @@ public class BuyServlet extends HttpServlet implements Servlet {
             }
 
             String itemId = request.getParameter("itemId");
-            Map<Integer, ItemPurchaseData> itemHistory = (HashMap) session
+            Map<Integer, ItemPurchaseData> itemHistory = (HashMap<Integer, ItemPurchaseData>) session
                     .getAttribute("itemHistory");
+            if (itemHistory == null) {
+                response.sendRedirect("/eBay/keywordSearch.html");
+                return;
+            }
+
             ItemPurchaseData itemData = null;
-            if (!itemHistory.containsKey(itemId)) {
-                response.sendRedirect(request.getRequestURI());
+            if (!itemHistory.containsKey(Integer.parseInt(itemId))) {
+                response.sendRedirect("/eBay/keywordSearch.html");
                 return;
             } else {
-                itemData = itemHistory.get(itemId);
+                itemData = itemHistory.get(Integer.parseInt(itemId));
             }
 
             request.setAttribute("itemId", itemData.getItemId());
